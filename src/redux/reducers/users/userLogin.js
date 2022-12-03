@@ -26,6 +26,7 @@ export const callLogin = (userLogin) => async () => {
         saveLocal(DATA_USER, apiLogin.data.content)
         history.push('/projectmanagement')
     } catch (err) {
-        alert(err.response.data.message)
+        return new Promise((resolve, reject) =>
+            resolve({ isError: true }));
     }
 }

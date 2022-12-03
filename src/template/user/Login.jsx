@@ -3,14 +3,25 @@ import { useDispatch } from "react-redux";
 import { USER_LOGIN } from "../../utils/constant";
 import { getStringLocal } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, notification } from "antd";
 import { callLogin } from "../../redux/reducers/users/userLogin";
 export default function Login() {
   let navigate = useNavigate();
   let dispatch = useDispatch();
   const onSubmit = async (values) => {
-    let { email, passWord } = values;
-    await dispatch(callLogin({ email, passWord }));
+    try {
+      let { email, passWord } = values;
+      const result = await dispatch(callLogin({ email, passWord }));
+      if (result.isError == true) {
+        openNotificationWithIcon();
+      }
+    } catch (error) {}
+  };
+  const openNotificationWithIcon = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "Your email or password is incorrect !",
+    });
   };
   return (
     <section className="vh-100 pt-5">

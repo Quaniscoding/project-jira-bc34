@@ -5,7 +5,6 @@ export default function NotFound() {
   let navigate = useNavigate();
   return (
     <div>
-      {" "}
       <Result
         status="404"
         title="404"
@@ -14,10 +13,10 @@ export default function NotFound() {
           <Button
             type="primary"
             onClick={() => {
-              navigate("/trangchu");
+              navigate("/");
             }}
           >
-            Về trang chủ
+            Back to home
           </Button>
         }
       />

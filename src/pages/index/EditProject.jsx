@@ -15,6 +15,7 @@ export default function EditProject() {
   const projectCategogy = useSelector(
     (state) => state.getProjectCategory.projectCategory
   );
+  console.log(projectCategogy);
   const listProjectDetail = useSelector(
     (state) => state.getProjectDetail.listProjectDetail
   );
@@ -31,6 +32,9 @@ export default function EditProject() {
       dispatch(callUpdateProject(listProjectDetail.id, values));
     },
   });
+  const handleChangeProjectCategogy = (values) => {
+    formik.setFieldValue("categoryId", values);
+  };
   let timeout = null;
   if (timeout != null) {
     clearTimeout(timeout);
@@ -86,11 +90,11 @@ export default function EditProject() {
                 <Form.Item label="Category Id">
                   <Select
                     name="categoryId"
-                    onChange={formik.handleChange}
-                    placeholder={listProjectDetail.projectCategory?.name}
-                    options={projectCategogy.map((item, index) => ({
+                    onChange={handleChangeProjectCategogy}
+                    defaultValue={listProjectDetail?.projectCategory?.name}
+                    options={projectCategogy.map((item) => ({
                       label: item.projectCategoryName,
-                      value: index,
+                      value: item.id,
                     }))}
                   />
                 </Form.Item>

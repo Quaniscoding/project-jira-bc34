@@ -8,11 +8,13 @@ import Projectmanagement from './pages/index/Projectmanagement';
 import CreateProject from './pages/index/CreateProject';
 import LayoutAdmin from './template/admin/LayoutAdmin';
 import EditProject from './pages/index/EditProject';
+import NotFound from './pages/notFound/NotFound';
 function App() {
   return (
     <div className="App">
       <HistoryRouter history={history}>
         <Routes>
+          <Route path='*' element={<NotFound />} />
           <Route path='/' element={<LayoutAdmin />}>
             <Route path='projectmanagement' element={<Projectmanagement />}></Route>
             <Route path='createProject' element={<CreateProject />}></Route>

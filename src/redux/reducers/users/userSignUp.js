@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { notification } from 'antd';
 import { http } from '../../../utils/baseUrl';
 import { history } from '../../../utils/history';
 const initialState = {
@@ -17,9 +18,9 @@ export default userSignUp.reducer
 export const callSignUp = (userLogin) => async () => {
     try {
         const apiLogin = await http.post("/Users/signup", userLogin)
-        history.push("/login")
-        alert(apiLogin.data.message)
+        history.push("user/login")
     } catch (err) {
-        alert(err.response.data.message);
+        return new Promise((resolve, reject) =>
+            resolve({ isError: true }));
     }
 }

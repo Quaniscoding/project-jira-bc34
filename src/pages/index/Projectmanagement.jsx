@@ -10,12 +10,13 @@ import { callDeleteProject } from "../../redux/reducers/projects/deleteProject";
 import { callDeleteUserFromProject } from "../../redux/reducers/users/deleteUserFromProject";
 import { callAsignUserFromProject } from "../../redux/reducers/users/asignUserFromProject";
 import { callGetListUser } from "../../redux/reducers/users/getUser";
-import TextArea from "antd/es/input/TextArea";
 import { callGetListProjectDetail } from "./../../redux/reducers/projects/getProjectDetail";
-import { useFormik } from "formik";
 import { callGetProjectCategory } from "../../redux/reducers/projects/getProjectCategory";
 
 export default function Projectmanagement(props) {
+  const reloadPage = () => {
+    window.location.reload(false);
+  };
   const [loading, setLoading] = useState(false);
   const listUser = useSelector((state) => state.getUser.listUser);
   const { value, onChange } = props;
@@ -35,16 +36,10 @@ export default function Projectmanagement(props) {
   let isLogin = getStringLocal(USER_LOGIN);
   let dispatch = useDispatch();
   let navigate = useNavigate();
-
   const listProject = useSelector((state) => state.getAllProject.listProject);
-  console.log(listProject);
-  let dataUser = {
+  const dataUser = {
     projectId: "",
     userId: "",
-  };
-  const onSubmit = async (values) => {
-    let { projectName, description, categoryId, alias } = values;
-    console.log(values);
   };
   const columns = [
     {
@@ -78,12 +73,6 @@ export default function Projectmanagement(props) {
       title: "Creator",
       dataIndex: "creator",
       key: "creator",
-      filters: [],
-      filteredValue: filteredInfo.creator || null,
-      onFilter: (value, record) => record.creator.includes(value),
-      sorter: (a, b) => a.creator.length - b.creator.length,
-      sortOrder: sortedInfo.columnKey === "creator" ? sortedInfo.order : null,
-      ellipsis: true,
     },
     {
       title: "Members",
@@ -96,6 +85,20 @@ export default function Projectmanagement(props) {
       key: "action",
     },
   ];
+  let timeout = null;
+  if (timeout != null) {
+    clearTimeout(timeout);
+  }
+  useEffect(() => {
+    setLoading(true);
+    timeout = setTimeout(() => {
+      setLoading(false);
+      dispatch(callGetListProject);
+      dispatch(callGetListUser);
+      dispatch(callGetListProjectDetail);
+      dispatch(callGetProjectCategory);
+    }, 1000);
+  }, []);
 
   const data = listProject.map((item, index) => {
     return {
@@ -136,7 +139,9 @@ export default function Projectmanagement(props) {
                 <Tooltip
                   title={
                     <>
-                      <h5 className="text-black">Members</h5>
+                      <h5 key={i} className="text-black">
+                        Members
+                      </h5>
                       <table className="table bg-white">
                         <thead>
                           <tr>
@@ -172,6 +177,7 @@ export default function Projectmanagement(props) {
                                       callDeleteUserFromProject(dataUser)
                                     );
                                   }
+                                  reloadPage(true);
                                 }}
                               >
                                 <Avatar>X</Avatar>
@@ -207,7 +213,7 @@ export default function Projectmanagement(props) {
                       <>
                         {listUser.map((item, index) => {
                           let i = index;
-                          for (i = 0; i < 10; i++) {
+                          for (; i < 10; i++) {
                             return (
                               <>
                                 <button
@@ -215,9 +221,17 @@ export default function Projectmanagement(props) {
                                   key={index}
                                   onClick={() => {
                                     dataUser.userId = item.userId;
-                                    dispatch(
-                                      callAsignUserFromProject(dataUser)
-                                    );
+                                    if (dataUser.projectId != "") {
+                                      if (
+                                        dispatch(
+                                          callAsignUserFromProject(dataUser)
+                                        )
+                                      ) {
+                                        setTimeout(() => {
+                                          reloadPage(true);
+                                        }, 1000);
+                                      }
+                                    }
                                   }}
                                 >
                                   {item.name}
@@ -270,6 +284,7 @@ export default function Projectmanagement(props) {
                 ) {
                   dispatch(callDeleteProject(item.id));
                 }
+                reloadPage(true);
               }}
             >
               <DeleteOutlined />
@@ -279,20 +294,7 @@ export default function Projectmanagement(props) {
       ],
     };
   });
-  let timeout = null;
-  if (timeout != null) {
-    clearTimeout(timeout);
-  }
-  useEffect(() => {
-    setLoading(true);
-    timeout = setTimeout(() => {
-      setLoading(false);
-      dispatch(callGetListProject);
-      dispatch(callGetListUser);
-      dispatch(callGetListProjectDetail);
-      dispatch(callGetProjectCategory);
-    }, 1000);
-  }, []);
+
   return (
     <>
       {loading ? (

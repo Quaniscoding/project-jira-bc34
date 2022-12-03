@@ -3,15 +3,28 @@ import { useDispatch } from "react-redux";
 import { USER_LOGIN } from "../../utils/constant";
 import { getStringLocal } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, notification } from "antd";
 import { callSignUp } from "../../redux/reducers/users/userSignUp";
 export default function SignUp() {
   let navigate = useNavigate();
   let isLogin = getStringLocal(USER_LOGIN);
   let dispatch = useDispatch();
   const onSubmit = async (values) => {
-    let { email, passWord, name, phoneNumber } = values;
-    await dispatch(callSignUp({ email, passWord, name, phoneNumber }));
+    try {
+      let { email, passWord, name, phoneNumber } = values;
+      const result = await dispatch(
+        callSignUp({ email, passWord, name, phoneNumber })
+      );
+      if (result.isError == true) {
+        openNotificationWithIcon();
+      }
+    } catch (error) {}
+  };
+  const openNotificationWithIcon = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "Email already in use!",
+    });
   };
   return (
     <section className="vh-100 pt-5">
