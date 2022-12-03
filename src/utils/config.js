@@ -1,6 +1,5 @@
 // lưu localStorage value là chuỗi
 const saveStringLocal = (key, value) => {
-
     localStorage.setItem(key, value);
 }
 

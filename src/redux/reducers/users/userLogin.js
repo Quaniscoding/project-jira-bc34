@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { http } from '../../../utils/baseUrl';
-import { saveStringLocal } from '../../../utils/config';
-import { USER_LOGIN } from '../../../utils/constant';
+import { saveLocal, saveStringLocal } from '../../../utils/config';
+import { DATA_USER, USER_LOGIN } from '../../../utils/constant';
+import { history } from '../../../utils/history';
 
 const initialState = {
 
@@ -22,7 +23,8 @@ export const callLogin = (userLogin) => async () => {
         const apiLogin = await http.post("Users/signin", userLogin)
         saveStringLocal(USER_LOGIN, apiLogin.data.content.accessToken
         )
-        alert(apiLogin.data.message)
+        saveLocal(DATA_USER, apiLogin.data.content)
+        history.push('/projectmanagement')
     } catch (err) {
         alert(err.response.data.message)
     }
