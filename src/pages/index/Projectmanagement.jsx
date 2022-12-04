@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { callGetListProject } from "../../redux/reducers/projects/getAllProject";
 import { getStringLocal } from "../../utils/config";
 import { USER_LOGIN } from "../../utils/constant";
-import { Avatar, Button, Input, Space, Table, Tooltip } from "antd";
+import { Avatar, Button, Input, Result, Space, Table, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { callDeleteProject } from "../../redux/reducers/projects/deleteProject";
 import { callDeleteUserFromProject } from "../../redux/reducers/users/deleteUserFromProject";
@@ -46,8 +46,8 @@ export default function Projectmanagement(props) {
       title: "id",
       dataIndex: "id",
       key: "id",
-      filteredValue: filteredInfo.name || null,
-      onFilter: (value, record) => record.name.includes(value),
+      filteredValue: filteredInfo.id || null,
+      onFilter: (value, record) => record.id.includes(value),
       sorter: (a, b) => a.id - b.id,
       sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
       ellipsis: true,
@@ -104,7 +104,16 @@ export default function Projectmanagement(props) {
     return {
       key: index,
       id: item.id,
-      projectName: <p className="p-0 m-0 text-blue-500"> {item.projectName}</p>,
+      projectName: (
+        <button
+          className="p-0 m-0 text-blue-500"
+          onClick={() => {
+            navigate(`/projectDetail/${item.id}`);
+          }}
+        >
+          {item.projectName}
+        </button>
+      ),
       categogy: item.categoryName,
       creator: (
         <div className="m-auto">
@@ -121,7 +130,6 @@ export default function Projectmanagement(props) {
           </p>
         </div>
       ),
-
       member: (
         <span className="d-flex">
           <Avatar.Group
@@ -294,7 +302,6 @@ export default function Projectmanagement(props) {
       ],
     };
   });
-
   return (
     <>
       {loading ? (
@@ -326,7 +333,24 @@ export default function Projectmanagement(props) {
               </>
             </div>
           ) : (
-            "Chưa đăng nhập"
+            <Result
+              className="col-12"
+              title="You are not logged in !"
+              extra={
+                <>
+                  <span>Click button to log in !</span>
+                  <Button
+                    type="primary"
+                    key="console"
+                    onClick={() => {
+                      navigate(`/user/login`);
+                    }}
+                  >
+                    Login{" "}
+                  </Button>
+                </>
+              }
+            />
           )}
         </div>
       )}

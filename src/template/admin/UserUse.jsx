@@ -119,7 +119,9 @@ export default function UserUse() {
                   {dataUser.name}
                 </p>
               ) : (
-                <p style={{ paddingTop: "5px", margin: "0" }}>Chưa đăng nhập</p>
+                <p style={{ paddingTop: "5px", margin: "0" }}>
+                  You are not logged in !
+                </p>
               )}
             </div>
 

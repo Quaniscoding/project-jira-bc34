@@ -155,3 +155,7 @@ ul.nav.flex-column li a.nav-link.active{
       transform: rotate(360deg);
   }
 }
+
+@media(min-width: 375px) and (max-width: 667px) {
+  
+}

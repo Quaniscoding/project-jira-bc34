@@ -9,6 +9,9 @@ import CreateProject from './pages/index/CreateProject';
 import LayoutAdmin from './template/admin/LayoutAdmin';
 import EditProject from './pages/index/EditProject';
 import NotFound from './pages/notFound/NotFound';
+import CreateTask from './pages/task/CreateTask';
+import EditTask from './pages/task/EditTask';
+import ProjectDetail from './pages/index/ProjectDetail';
 function App() {
   return (
     <div className="App">
@@ -16,10 +19,13 @@ function App() {
         <Routes>
           <Route path='*' element={<NotFound />} />
           <Route path='/' element={<LayoutAdmin />}>
-            <Route path='projectmanagement' element={<Projectmanagement />}></Route>
-            <Route path='createProject' element={<CreateProject />}></Route>
-            <Route path='projectmanagement/edit/:id' element={<EditProject />}></Route>
+            <Route path='projectmanagement' element={<Projectmanagement />} />
+            <Route path='createProject' element={<CreateProject />} />
+            <Route path='projectmanagement/edit/:id' element={<EditProject />} />
+            <Route path='createTask/:id' element={<CreateTask />} />
+            <Route path='editTask/:id' element={<EditTask />} />
           </Route>
+          <Route path='/projectDetail/:id' element={<ProjectDetail />} />
           <Route path='/user'>
             <Route path='login' element={<Login />}>
             </Route>

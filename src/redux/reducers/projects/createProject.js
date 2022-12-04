@@ -25,7 +25,7 @@ export const callCreateProject = (data) => async () => {
         console.log(data);
         const apiCreateProject = await http.post("/Project/createProjectAuthorize", data)
         history.push("/projectmanagement")
-        alert(apiCreateProject.data.content)
+        alert(`Create project ${apiCreateProject.data.content.projectName} success!`)
     } catch (err) {
         alert(err.response.data.content);
     }
