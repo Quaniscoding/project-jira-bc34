@@ -35,18 +35,32 @@ export default function Login() {
           </div>
           <div className="col-md-8 col-lg-6 col-xl-4">
             <Form
+              name="basic"
               initialValues={{ remember: true }}
               onFinish={onSubmit}
               autoComplete="on"
             >
-              <span id="dangNhap">Đăng Nhập</span>
+              <span
+                id="login"
+                style={{
+                  fontSize: "40px",
+                  color: "#4b6cb7",
+                  marginBottom: "25px",
+                  display: "block",
+                }}
+              >
+                Log in
+              </span>
               <div>
                 <Form.Item
                   name="email"
                   rules={[
                     {
                       required: true,
-                      message: "Hãy nhập ô này!",
+                      message: "Please input your email !",
+                    },
+                    {
+                      type: "email",
                     },
                   ]}
                 >
@@ -58,29 +72,34 @@ export default function Login() {
                   rules={[
                     {
                       required: true,
-                      message: "Hãy nhập ô này!",
+                      message: "Please input your password!",
+                    },
+                    {
+                      type: "string",
+                      min: 0,
+                      max: 10,
                     },
                   ]}
                 >
-                  <Input type="password" placeholder="Mật khẩu" />
+                  <Input type="password" placeholder="Password" />
                 </Form.Item>
               </div>
 
               <div className="text-center text-lg-start mt-4 pt-2">
                 <Form.Item>
                   <Button type="primary" htmlType="submit">
-                    Đăng nhập
+                    Login
                   </Button>
                 </Form.Item>
                 <span>
-                  Bạn chưa có tài khoản ?{" "}
+                  Or{" "}
                   <a
                     onClick={() => {
                       navigate("/user/signup");
                     }}
                     className="fw-bolder text-black"
                   >
-                    Đăng ký
+                    Sign up now ?
                   </a>
                 </span>
               </div>

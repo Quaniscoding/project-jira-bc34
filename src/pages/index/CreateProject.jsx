@@ -16,7 +16,6 @@ export default function CreateProject() {
     );
   };
   let dispatch = useDispatch();
-  const navigate = useNavigate();
   const projectCategogy = useSelector(
     (state) => state.getProjectCategory.projectCategory
   );
@@ -48,16 +47,52 @@ export default function CreateProject() {
                 layout="vertical"
                 initialValues={{ remember: true }}
               >
-                <Form.Item name="projectName" label="Name">
+                <Form.Item
+                  name="projectName"
+                  label="Name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input project name!",
+                    },
+                  ]}
+                >
                   <Input />
                 </Form.Item>
-                <Form.Item name="alias" label="Alias">
+                <Form.Item
+                  name="alias"
+                  label="Alias"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input alias!",
+                    },
+                  ]}
+                >
                   <Input />
                 </Form.Item>
-                <Form.Item name="description" label="Description">
+                <Form.Item
+                  name="description"
+                  label="Description"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input description!",
+                    },
+                  ]}
+                >
                   <TextArea rows={8} />
                 </Form.Item>
-                <Form.Item name="categoryId" label="Select">
+                <Form.Item
+                  name="categoryId"
+                  label="Select"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input Category Id!",
+                    },
+                  ]}
+                >
                   <Select>
                     {projectCategogy.map((item, index) => {
                       return (

@@ -242,7 +242,7 @@ export default function Projectmanagement(props) {
                                     }
                                   }}
                                 >
-                                  {item.name}
+                                  <p style={{ margin: "0" }}>{item.name}</p>
                                 </button>
                                 <br />
                               </>

@@ -15,7 +15,6 @@ export default function EditProject() {
   const projectCategogy = useSelector(
     (state) => state.getProjectCategory.projectCategory
   );
-  console.log(projectCategogy);
   const listProjectDetail = useSelector(
     (state) => state.getProjectDetail.listProjectDetail
   );
@@ -71,7 +70,7 @@ export default function EditProject() {
                     onChange={formik.handleChange}
                   />
                 </Form.Item>
-                <Form.Item label="Name">
+                <Form.Item label="Project name" required>
                   <Input
                     name="projectName"
                     value={formik.values.projectName}

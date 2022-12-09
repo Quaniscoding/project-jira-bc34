@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { USER_LOGIN } from "../../utils/constant";
 import { getStringLocal } from "../../utils/config";
@@ -45,17 +45,20 @@ export default function SignUp() {
               onFinish={onSubmit}
               autoComplete="on"
             >
-              <span id="dangKy">Đăng ký</span>
+              <span id="signup">Sign up</span>
               <Form.Item
                 name="email"
                 rules={[
                   {
                     required: true,
-                    message: "Hãy nhập email!",
+                    message: "Please input your email !",
+                  },
+                  {
+                    type: "email",
                   },
                 ]}
               >
-                <Input placeholder="Email" />
+                <Input type="email" placeholder="Email" />
               </Form.Item>
 
               <Form.Item
@@ -63,48 +66,58 @@ export default function SignUp() {
                 rules={[
                   {
                     required: true,
-                    message: "Hãy nhập mật khẩu!",
+                    message: "Please input your password!",
+                  },
+                  {
+                    type: "string",
+                    min: 0,
+                    max: 10,
                   },
                 ]}
               >
-                <Input type="password" placeholder="Mật khẩu" />
+                <Input type="password" placeholder="Password" />
               </Form.Item>
               <Form.Item
                 name="name"
                 rules={[
                   {
                     required: true,
-                    message: "Hãy nhập tên của bạn!",
+                    message: "Please input your name!",
                   },
                 ]}
               >
-                <Input placeholder="Họ tên" />
+                <Input placeholder="Name" />
               </Form.Item>
               <Form.Item
                 name="phoneNumber"
                 rules={[
                   {
                     required: true,
-                    message: "Hãy nhập số điện thoại của bạn!",
+                    message: "Please input your phone number!",
+                  },
+                  {
+                    type: "string",
+                    min: 10,
+                    max: 10,
                   },
                 ]}
               >
-                <Input placeholder="Số điện thoại" />
+                <Input placeholder="Phone number" />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
-                  Đăng ký
+                  Sign up
                 </Button>
               </Form.Item>
               <span>
-                Bạn đã có tài khoản ?{" "}
+                You have an account ?{" "}
                 <a
                   onClick={() => {
                     navigate("/user/login");
                   }}
                   className="fw-bolder text-black"
                 >
-                  Đăng nhập
+                  Log in
                 </a>
               </span>
             </Form>
