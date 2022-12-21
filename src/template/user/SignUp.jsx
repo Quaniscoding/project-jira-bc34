@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import "./css/userMain.css";
+
 import { useDispatch } from "react-redux";
 import { USER_LOGIN } from "../../utils/constant";
 import { getStringLocal } from "../../utils/config";
@@ -27,8 +29,8 @@ export default function SignUp() {
     });
   };
   return (
-    <section className="vh-100 pt-5">
-      <div className="container-fluid h-custom">
+    <section className=" pt-5" id="formSignUp">
+      <div className="container-fluid h-custom content-sign-up">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-6">
             <img
@@ -45,7 +47,17 @@ export default function SignUp() {
               onFinish={onSubmit}
               autoComplete="on"
             >
-              <span id="signup">Sign up</span>
+              <span
+                id="signup"
+                style={{
+                  fontSize: "40px",
+                  color: "#4b6cb7",
+                  marginBottom: "25px",
+                  display: "block",
+                }}
+              >
+                Sign up
+              </span>
               <Form.Item
                 name="email"
                 rules={[
@@ -113,7 +125,7 @@ export default function SignUp() {
                 You have an account ?{" "}
                 <a
                   onClick={() => {
-                    navigate("/user/login");
+                    navigate("/login");
                   }}
                   className="fw-bolder text-black"
                 >

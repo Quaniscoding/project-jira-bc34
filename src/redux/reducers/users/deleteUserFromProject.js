@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { http } from '../../../utils/baseUrl';
 
 const initialState = {
-
+    user: []
 }
 
 const deleteUserFromProject = createSlice({

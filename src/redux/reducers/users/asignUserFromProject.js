@@ -17,9 +17,9 @@ export default asignUserFromProJet.reducer
 
 export const callAsignUserFromProject = (data) => async () => {
     try {
-        console.log(data);
         const apiAsignUserFromProject = await http.post("/Project/assignUserProject", data);
-        alert(apiAsignUserFromProject.data.content)
+        alert(apiAsignUserFromProject.data.content);
+        return apiAsignUserFromProject
     } catch (err) {
         alert(err.response.data.content)
     }

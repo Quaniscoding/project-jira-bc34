@@ -1,73 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { callGetListProject } from "../../redux/reducers/projects/getAllProject";
-import { getStringLocal } from "../../utils/config";
-import { USER_LOGIN } from "../../utils/constant";
-import { Avatar, Button, Input, Result, Space, Table, Tooltip } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { callDeleteProject } from "../../redux/reducers/projects/deleteProject";
-import { callDeleteUserFromProject } from "../../redux/reducers/users/deleteUserFromProject";
-import { callAsignUserFromProject } from "../../redux/reducers/users/asignUserFromProject";
-import { callGetListUser } from "../../redux/reducers/users/getUser";
-import { callGetListProjectDetail } from "./../../redux/reducers/projects/getProjectDetail";
-import { callGetProjectCategory } from "../../redux/reducers/projects/getProjectCategory";
-
-export default function Projectmanagement(props) {
-  const reloadPage = () => {
-    window.location.reload(false);
-  };
-  const [loading, setLoading] = useState(false);
+import { callGetListProject } from "../../../redux/reducers/projects/getAllProject";
+import { getStringLocal } from "../../../utils/config";
+import { USER_LOGIN } from "../../../utils/constant";
+import { Avatar, Button, Input, Result, Table, Tooltip } from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { callDeleteProject } from "../../../redux/reducers/projects/deleteProject";
+import { callDeleteUserFromProject } from "../../../redux/reducers/users/deleteUserFromProject";
+import { callAsignUserFromProject } from "../../../redux/reducers/users/asignUserFromProject";
+import { callGetListUser } from "../../../redux/reducers/users/getUser";
+import { callGetListProjectDetail } from "../../../redux/reducers/projects/getProjectDetail";
+import { callGetProjectCategory } from "../../../redux/reducers/projects/getProjectCategory";
+import useRoute from "../../../hooks/useRoute";
+import "./css/project.css";
+export default function Projectmanagement() {
   const listUser = useSelector((state) => state.getUser.listUser);
-  const { value, onChange } = props;
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-  const handleChange = (filters, sorter) => {
-    setFilteredInfo(filters);
-    setSortedInfo(sorter);
-  };
-  const clearFilters = () => {
-    setFilteredInfo({});
-  };
-  const clearAll = () => {
-    setFilteredInfo({});
-    setSortedInfo({});
-  };
   let isLogin = getStringLocal(USER_LOGIN);
   let dispatch = useDispatch();
   let navigate = useNavigate();
   const listProject = useSelector((state) => state.getAllProject.listProject);
+  const {
+    searchParams: [searchParams, setSearchParams],
+  } = useRoute();
+  const keyWord = searchParams.has("keyWord")
+    ? searchParams.get("keyWord")
+    : "";
+
   const dataUser = {
     projectId: "",
     userId: "",
   };
+
   const columns = [
     {
       title: "id",
       dataIndex: "id",
       key: "id",
-      filteredValue: filteredInfo.id || null,
-      onFilter: (value, record) => record.id.includes(value),
-      sorter: (a, b) => a.id - b.id,
-      sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
-      ellipsis: true,
     },
     {
       title: "Project Name",
       dataIndex: "projectName",
       key: "projectName",
-      sorter: (a, b) => a.projectName.length - b.projectName.length,
-      sortOrder:
-        sortedInfo.columnKey === "projectName" ? sortedInfo.order : null,
-      ellipsis: true,
     },
     {
       title: "Categogy",
       dataIndex: "categogy",
       key: "categogy",
-      sorter: (a, b) => a.categogy.length - b.categogy.length,
-      sortOrder: sortedInfo.columnKey === "categogy" ? sortedInfo.order : null,
-      ellipsis: true,
     },
     {
       title: "Creator",
@@ -90,15 +73,13 @@ export default function Projectmanagement(props) {
     clearTimeout(timeout);
   }
   useEffect(() => {
-    setLoading(true);
     timeout = setTimeout(() => {
-      setLoading(false);
-      dispatch(callGetListProject);
+      dispatch(callGetListProject(keyWord));
       dispatch(callGetListUser);
       dispatch(callGetListProjectDetail);
       dispatch(callGetProjectCategory);
     }, 1000);
-  }, []);
+  }, [keyWord]);
 
   const data = listProject.map((item, index) => {
     return {
@@ -185,7 +166,6 @@ export default function Projectmanagement(props) {
                                       callDeleteUserFromProject(dataUser)
                                     );
                                   }
-                                  reloadPage(true);
                                 }}
                               >
                                 <Avatar>X</Avatar>
@@ -230,15 +210,9 @@ export default function Projectmanagement(props) {
                                   onClick={() => {
                                     dataUser.userId = item.userId;
                                     if (dataUser.projectId != "") {
-                                      if (
-                                        dispatch(
-                                          callAsignUserFromProject(dataUser)
-                                        )
-                                      ) {
-                                        setTimeout(() => {
-                                          reloadPage(true);
-                                        }, 1000);
-                                      }
+                                      dispatch(
+                                        callAsignUserFromProject(dataUser)
+                                      );
                                     }
                                   }}
                                 >
@@ -292,7 +266,6 @@ export default function Projectmanagement(props) {
                 ) {
                   dispatch(callDeleteProject(item.id));
                 }
-                reloadPage(true);
               }}
             >
               <DeleteOutlined />
@@ -303,57 +276,52 @@ export default function Projectmanagement(props) {
     };
   });
   return (
-    <>
-      {loading ? (
-        <div className="loader-container">
-          <div className="spinner"></div>
+    <main className="container py-6">
+      {isLogin ? (
+        <div>
+          <div className="d-flex content-start">
+            <h3>Project</h3>
+          </div>
+          <form className="form-inline my-2 my-lg-0">
+            <input
+              placeholder=""
+              style={{
+                width: 200,
+                paddingBottom: 10,
+                border: "gray solid 1px",
+                borderRadius: 5,
+              }}
+              value={keyWord}
+              onChange={(event) => {
+                let { value } = event.target;
+                setSearchParams({ keyWord: value });
+              }}
+            />
+            <SearchOutlined />
+          </form>
+          <br />
+          <Table columns={columns} dataSource={data} />
         </div>
       ) : (
-        <div className="col-8 d-flex" style={{ paddingLeft: "5%" }}>
-          {isLogin ? (
-            <div className="w-100">
-              <div className="d-flex content-start">
-                <h1>Project management</h1>
-              </div>
-              <br />
-              <>
-                <Space
-                  style={{
-                    marginBottom: 16,
-                  }}
-                >
-                  <Button onClick={clearFilters}>Clear filters</Button>
-                  <Button onClick={clearAll}>Clear filters and sorters</Button>
-                </Space>
-                <Table
-                  columns={columns}
-                  dataSource={data}
-                  onChange={handleChange}
-                />
-              </>
-            </div>
-          ) : (
-            <Result
-              className="col-12"
-              title="You are not logged in !"
-              extra={
-                <>
-                  <span>Click button to log in !</span>
-                  <Button
-                    type="primary"
-                    key="console"
-                    onClick={() => {
-                      navigate(`/user/login`);
-                    }}
-                  >
-                    Login{" "}
-                  </Button>
-                </>
-              }
-            />
-          )}
-        </div>
+        <Result
+          className="col-12"
+          title="You are not logged in !"
+          extra={
+            <>
+              <span>Click button to log in !</span>
+              <Button
+                type="primary"
+                key="console"
+                onClick={() => {
+                  navigate(`/user/login`);
+                }}
+              >
+                Login{" "}
+              </Button>
+            </>
+          }
+        />
       )}
-    </>
+    </main>
   );
 }

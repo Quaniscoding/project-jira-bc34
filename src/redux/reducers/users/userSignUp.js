@@ -18,7 +18,7 @@ export default userSignUp.reducer
 export const callSignUp = (userLogin) => async () => {
     try {
         const apiLogin = await http.post("/Users/signup", userLogin)
-        history.push("user/login")
+        history.push("/login")
     } catch (err) {
         return new Promise((resolve, reject) =>
             resolve({ isError: true }));

@@ -1,0 +1,46 @@
+.shadow, .shadow-none {
+    box-shadow: var(--tw-ring-offset-shadow,0 0 transparent),var(--tw-ring-shadow,0 0 transparent),var(--tw-shadow);
+}
+.shadow {
+    --tw-shadow: 0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06);
+}
+a.nav-link:hover{
+background-color: #BFDBFE ;
+border-radius: 0.25rem;
+
+}
+.fixed {
+    position: fixed;
+}
+
+/* iphone 6,7,8*/
+@media(min-width:375px) and (max-width:667px) {
+
+}
+/* iphone 6,7,8s*/
+
+@media(min-width:414px)and (max-width:736px) {
+   
+}
+/* iphone 12*/
+
+@media(min-width:390px)and (max-width:844px) {
+
+}
+/* ipad*/
+
+@media(min-width:768px)and (max-width:1024px) {
+    .container-fluid{
+        display: flex;
+        flex-wrap: initial !important;
+        align-items: center;
+    }
+.navbar-toggler{display: none;}
+ul.navbar-nav{
+    display: flex;
+    flex-direction: unset;
+}
+ul.navbar-nav li{
+    padding-left: 30px;
+}
+}

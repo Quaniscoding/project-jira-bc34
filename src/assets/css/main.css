@@ -2,88 +2,9 @@
 body {
   font-family: 'Roboto', cursive;
 }
-
-.login,.signup   {
-  width: 360px;
-  padding: 8% 0 0;
-  margin: auto;
-}
-
-.form {
-  position: relative;
-  z-index: 1;
-  /* background: #FFFFFF; */
-  border-radius: 10px;
-  max-width: 360px;
-  margin: 0 auto 100px;
-  padding: 45px;
-  text-align: center;
-  background: url(https://media4.giphy.com/media/BHNfhgU63qrks/giphy.gif) center center no-repeat;
-  background-size: cover;
-}
-
-.Form Input {
-  outline: 0;
-  background: #f2f2f2;
-  width: 100%;
-  border: 0;
-  border-radius: 5px;
-  margin: 0 0 15px;
-  padding: 15px;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-family: 'Comfortaa', cursive;
-}
-
-.form Input:focus {
-  background: #dbdbdb;
-}
-.ant-input-affix-wrapper{
-  background: #f2f2f2;
-}
-.ant-input-affix-wrapper:focus {
-  background: #f2f2f2;
-}
-.ant-input-affix-wrapper input{
-  outline: 0 !important;
-  box-sizing: border-box;
-  border: none !important;
-  background: #f2f2f2;
-  margin: 10px;
-}
-:where(.css-dev-only-do-not-override-4fkhgu).ant-input-affix-wrapper:not(:where(.css-dev-only-do-not-override-4fkhgu).ant-input-affix-wrapper-disabled):hover {
-  border: none !important;
-}
-.form Button {
-  font-family: 'Comfortaa', cursive;
-  text-transform: uppercase;
-  outline: 0;
-  background: #4b6cb7;
-  border: 0;
-  border-radius: 5px;
-  color: #FFFFFF;
-  font-size: 14px;
-  -webkit-transition: all 0.3 ease;
-  transition: all 0.3 ease;
-  cursor: pointer;
-}
-
-.form Button:active {
-  background: #395591;
-}
-
-.form span#login,span#signup {
-  font-size: 40px !important;
-  color: #4b6cb7;
-  margin-bottom: 25px;
-  display: block;
-}
-
-.form p.error {
-  margin: 0 0 10px 10px;
-  text-align: left;
-  font-size: 10px;
-  color: red;
+a {
+  color: inherit;
+  text-decoration: none !important;
 }
 ul.nav.flex-column li a.nav-link{
   color: black;

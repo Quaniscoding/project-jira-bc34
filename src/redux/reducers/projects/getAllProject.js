@@ -17,11 +17,19 @@ const getAllProject = createSlice({
 export const { getListProject } = getAllProject.actions
 
 export default getAllProject.reducer
-export const callGetListProject = async (dispatch) => {
-    try {
-        const apiGetProject = await http.get("Project/getAllProject")
-        dispatch(getListProject(apiGetProject.data.content));
-    } catch (err) {
-        console.log(err);
+export const callGetListProject = (keyWord) => {
+    return async (dispatch) => {
+        try {
+            if (keyWord != "") {
+                const apiGetProject = await http.get(`Project/getAllProject?keyWord=${keyWord}`)
+                dispatch(getListProject(apiGetProject.data.content));
+            }
+            else {
+                const apiGetProject = await http.get(`Project/getAllProject`)
+                dispatch(getListProject(apiGetProject.data.content));
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
 }

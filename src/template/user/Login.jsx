@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { USER_LOGIN } from "../../utils/constant";
-import { getStringLocal } from "../../utils/config";
+import "./css/userMain.css";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, notification } from "antd";
 import { callLogin } from "../../redux/reducers/users/userLogin";
@@ -25,7 +24,7 @@ export default function Login() {
   };
   return (
     <section className="vh-100 pt-5">
-      <div className="container-fluid h-custom">
+      <div className="container-fluid h-custom content">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-6 ">
             <img
@@ -35,6 +34,7 @@ export default function Login() {
           </div>
           <div className="col-md-8 col-lg-6 col-xl-4">
             <Form
+              id="formLogin"
               name="basic"
               initialValues={{ remember: true }}
               onFinish={onSubmit}
@@ -95,7 +95,7 @@ export default function Login() {
                   Or{" "}
                   <a
                     onClick={() => {
-                      navigate("/user/signup");
+                      navigate("/signup");
                     }}
                     className="fw-bolder text-black"
                   >
@@ -107,7 +107,7 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <div className="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+      <div className="bottom d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
         <div className="text-white mb-3 mb-md-0">
           Copyright © 2022. All rights reserved.
         </div>
