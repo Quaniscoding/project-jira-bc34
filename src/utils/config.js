@@ -11,7 +11,6 @@ const getStringLocal = (key) => {
 
 // lưu localStorage value là object hoặc list object
 const saveLocal = (key, value) => {
-
     let data = JSON.stringify(value);
     localStorage.setItem(key, data);
 }

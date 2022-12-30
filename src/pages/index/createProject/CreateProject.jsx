@@ -1,25 +1,39 @@
-import { Button, Form, Input, Radio, Select } from "antd";
+import { Button, Form, Input, notification, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import "./css/main.css";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { callCreateProject } from "../../../redux/reducers/projects/createProject";
 import { callGetProjectCategory } from "../../../redux/reducers/projects/getProjectCategory";
 export default function CreateProject() {
+  const openNotificationSuccess = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Create project successfully !",
+    });
+  };
+  const err = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "Project name already exists !",
+    });
+  };
   const [loading, setLoading] = useState(false);
   const onSubmit = async (values) => {
     let { projectName, description, categoryId, alias } = values;
-    console.log(values);
-    await dispatch(
+    const res = await dispatch(
       callCreateProject({ projectName, description, categoryId, alias })
     );
+    if (res.isCreate == true) {
+      openNotificationSuccess();
+    } else {
+      err();
+    }
   };
   let dispatch = useDispatch();
   const projectCategogy = useSelector(
     (state) => state.getProjectCategory.projectCategory
   );
-  console.log(projectCategogy);
   let timeout = null;
   if (timeout != null) {
     clearTimeout(timeout);
@@ -38,7 +52,7 @@ export default function CreateProject() {
           <div className="spinner"></div>
         </div>
       ) : (
-        <main className="container py-6">
+        <main className="container containerCreate py-6">
           <div className="mx-auto" style={{ maxWidth: 980 }}>
             <div className="ant-breadcrumb mb-4">
               <span>

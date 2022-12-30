@@ -13,6 +13,7 @@ import NotFound from './pages/notFound/NotFound';
 import CreateTask from './pages/task/CreateTask';
 import EditTask from './pages/task/EditTask';
 import ProjectDetail from './pages/index/projectDetail/ProjectDetail';
+import Profile from './template/profile/Profile';
 function App() {
   return (
     <HistoryRouter history={history}>
@@ -25,6 +26,7 @@ function App() {
           <Route path='createTask/:id' element={<CreateTask />} />
           <Route path='editTask/:id' element={<EditTask />} />
           <Route path='user' element={<User />}></Route>
+          <Route path='profile' element={<Profile />}></Route>
         </Route>
         <Route path='/projectDetail/:id' element={<ProjectDetail />} />
         <Route path='login' element={<Login />}></Route>

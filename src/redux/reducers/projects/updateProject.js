@@ -20,8 +20,13 @@ export const callUpdateProject = (projectId, data) => async () => {
     try {
         const apiUpdateProject = await http.put(`/Project/updateProject?projectId=${projectId}`, data);
         history.push("/projectmanagement");
-        alert("Update success !")
+        return { isUpdate: true }
     } catch (err) {
-        alert(err.response.data.content);
+        if (err.response.data.statusCode == 500) {
+            return { isError: true }
+        }
+        else {
+            return { isUpdate: false }
+        }
     }
 }

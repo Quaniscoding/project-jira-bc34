@@ -15,7 +15,6 @@ const getAllProject = createSlice({
 });
 
 export const { getListProject } = getAllProject.actions
-
 export default getAllProject.reducer
 export const callGetListProject = (keyWord) => {
     return async (dispatch) => {

@@ -18,8 +18,8 @@ export default deleteProject.reducer
 export const callDeleteProject = (idProject) => async () => {
     try {
         const apiDeleteProject = await http.delete(`/Project/deleteProject?projectId=${idProject}`);
-        alert(`Delete project has id: ${apiDeleteProject.data.content} success !`)
+        return { isDelete: true }
     } catch (err) {
-        alert(err.response.data.content)
+        return { isDelete: false }
     }
 }

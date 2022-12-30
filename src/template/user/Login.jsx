@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import "./css/userMain.css";
 import { useNavigate } from "react-router-dom";
@@ -12,11 +12,20 @@ export default function Login() {
       let { email, passWord } = values;
       const result = await dispatch(callLogin({ email, passWord }));
       if (result.isError == true) {
-        openNotificationWithIcon();
+        openNotificationFail();
+      }
+      if (result.isLogin == true) {
+        openNotificationSuccess();
       }
     } catch (error) {}
   };
-  const openNotificationWithIcon = () => {
+  const openNotificationSuccess = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Login success!",
+    });
+  };
+  const openNotificationFail = () => {
     notification["error"]({
       message: "Notification !",
       description: "Your email or password is incorrect !",

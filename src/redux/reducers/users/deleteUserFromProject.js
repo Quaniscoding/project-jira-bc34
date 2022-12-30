@@ -18,8 +18,8 @@ export default deleteUserFromProject.reducer
 export const callDeleteUserFromProject = (data) => async () => {
     try {
         const apiDeleteUserFromProject = await http.post("/Project/removeUserFromProject", data);
-        alert(apiDeleteUserFromProject.data.content)
+        return { isDelete: true }
     } catch (err) {
-        alert(err.response.data.content)
+        // alert(err.response.data.content)
     }
 }

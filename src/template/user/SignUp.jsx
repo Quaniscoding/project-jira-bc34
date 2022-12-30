@@ -18,14 +18,23 @@ export default function SignUp() {
         callSignUp({ email, passWord, name, phoneNumber })
       );
       if (result.isError == true) {
-        openNotificationWithIcon();
+        openNotificationError();
+      }
+      if (result.isSignUp == true) {
+        openNotificationSuccess();
       }
     } catch (error) {}
   };
-  const openNotificationWithIcon = () => {
+  const openNotificationError = () => {
     notification["error"]({
       message: "Notification !",
       description: "Email already in use!",
+    });
+  };
+  const openNotificationSuccess = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Create Success!",
     });
   };
   return (

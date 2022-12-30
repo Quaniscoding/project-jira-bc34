@@ -19,6 +19,7 @@ export const callSignUp = (userLogin) => async () => {
     try {
         const apiLogin = await http.post("/Users/signup", userLogin)
         history.push("/login")
+        return { isSignUp: true }
     } catch (err) {
         return new Promise((resolve, reject) =>
             resolve({ isError: true }));

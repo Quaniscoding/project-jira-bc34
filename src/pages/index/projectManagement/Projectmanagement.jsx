@@ -2,15 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { callGetListProject } from "../../../redux/reducers/projects/getAllProject";
-import { getStringLocal } from "../../../utils/config";
-import { USER_LOGIN } from "../../../utils/constant";
-import { Avatar, Button, Input, Result, Table, Tooltip } from "antd";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { getLocal, getStringLocal } from "../../../utils/config";
+import { USER_LOGIN, DATA_USER } from "../../../utils/constant";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 import { callDeleteProject } from "../../../redux/reducers/projects/deleteProject";
+import {
+  Avatar,
+  Button,
+  Input,
+  Result,
+  Table,
+  Tooltip,
+  Modal,
+  notification,
+} from "antd";
 import { callDeleteUserFromProject } from "../../../redux/reducers/users/deleteUserFromProject";
 import { callAsignUserFromProject } from "../../../redux/reducers/users/asignUserFromProject";
 import { callGetListUser } from "../../../redux/reducers/users/getUser";
@@ -18,9 +23,41 @@ import { callGetListProjectDetail } from "../../../redux/reducers/projects/getPr
 import { callGetProjectCategory } from "../../../redux/reducers/projects/getProjectCategory";
 import useRoute from "../../../hooks/useRoute";
 import "./css/project.css";
+const { confirm } = Modal;
 export default function Projectmanagement() {
+  const openNotificationDeleteUserFromProject = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Delete user successfully !",
+    });
+  };
+  const openNotificationAsignUserFromProject = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Asign user successfully !",
+    });
+  };
+  const err = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "User already exists !",
+    });
+  };
+  const errUnthor = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "User is unthorization!",
+    });
+  };
+  const openNotificationDeleteProject = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Delete project successfully !",
+    });
+  };
   const listUser = useSelector((state) => state.getUser.listUser);
   let isLogin = getStringLocal(USER_LOGIN);
+  const dataUserLogin = getLocal(DATA_USER);
   let dispatch = useDispatch();
   let navigate = useNavigate();
   const listProject = useSelector((state) => state.getAllProject.listProject);
@@ -35,7 +72,6 @@ export default function Projectmanagement() {
     projectId: "",
     userId: "",
   };
-
   const columns = [
     {
       title: "id",
@@ -80,7 +116,6 @@ export default function Projectmanagement() {
       dispatch(callGetProjectCategory);
     }, 1000);
   }, [keyWord]);
-
   const data = listProject.map((item, index) => {
     return {
       key: index,
@@ -98,17 +133,7 @@ export default function Projectmanagement() {
       categogy: item.categoryName,
       creator: (
         <div className="m-auto">
-          <p
-            style={{
-              border: "2px solid green",
-              width: "fit-content",
-              text: "#054905",
-              backgroundColor: "#94dc94",
-              textAlign: "left",
-            }}
-          >
-            {item.creator.name}
-          </p>
+          <p>{item.creator.name}</p>
         </div>
       ),
       member: (
@@ -153,22 +178,40 @@ export default function Projectmanagement() {
                             <td>{item.name}</td>
                             <td>
                               <button
-                                className=" btn-danger"
+                                className="btn btn-danger"
                                 onClick={() => {
-                                  dataUser.projectId = listProject[index].id;
-                                  dataUser.userId = item.userId;
-                                  if (
-                                    window.confirm(
-                                      `Do you want to delete user : ${item.name} `
-                                    )
-                                  ) {
-                                    dispatch(
-                                      callDeleteUserFromProject(dataUser)
-                                    );
-                                  }
+                                  confirm({
+                                    title: "Do you want delete this user ?",
+                                    icon: <ExclamationCircleFilled />,
+                                    okText: "Delete",
+                                    okType: "danger",
+                                    cancelType: "primary",
+                                    onOk: async () => {
+                                      try {
+                                        dataUser.projectId =
+                                          listProject[index].id;
+                                        dataUser.userId = item.userId;
+                                        if (
+                                          listProject[index].creator.id ==
+                                          dataUserLogin.id
+                                        ) {
+                                          const res = await dispatch(
+                                            callDeleteUserFromProject(dataUser)
+                                          );
+                                          if (res.isDelete == true) {
+                                            openNotificationDeleteUserFromProject();
+                                          }
+                                          dispatch(callGetListProject(keyWord));
+                                        } else {
+                                          errUnthor();
+                                        }
+                                      } catch (error) {}
+                                    },
+                                    onCancel() {},
+                                  });
                                 }}
                               >
-                                <Avatar>X</Avatar>
+                                X
                               </button>
                             </td>
                           </tr>
@@ -185,12 +228,16 @@ export default function Projectmanagement() {
               </>
             ))}
           </Avatar.Group>{" "}
+          {listUser.map((item, index) => {
+            dataUser.userId = item.userId;
+          })}
           <button
             onClick={() => {
               dataUser.projectId = listProject[index]?.id;
             }}
           >
             <Tooltip
+              placement="right"
               trigger={"click"}
               title={
                 <>
@@ -205,18 +252,27 @@ export default function Projectmanagement() {
                             return (
                               <>
                                 <button
-                                  className="text-black pb-1"
+                                  className="btn btn-white text-black pb-1"
                                   key={index}
-                                  onClick={() => {
+                                  onClick={async () => {
                                     dataUser.userId = item.userId;
                                     if (dataUser.projectId != "") {
-                                      dispatch(
+                                      const res = await dispatch(
                                         callAsignUserFromProject(dataUser)
                                       );
+                                      if (res.isAsign == true) {
+                                        openNotificationAsignUserFromProject();
+                                      }
+                                      if (res.isUnthor == true) {
+                                        errUnthor();
+                                      } else {
+                                        err();
+                                      }
+                                      dispatch(callGetListProject(keyWord));
                                     }
                                   }}
                                 >
-                                  <p style={{ margin: "0" }}>{item.name}</p>
+                                  {item.name}
                                 </button>
                                 <br />
                               </>
@@ -243,65 +299,111 @@ export default function Projectmanagement() {
         </span>
       ),
       action: [
-        <div className="d-flex algin-content-center">
-          <div>
+        <>
+          <div className="dropdown">
             <button
-              className="btn btn-info"
-              onClick={() => {
-                navigate(`edit/${listProject[index].id}`);
-              }}
+              className="btn btn-light dropdown-toggle dots"
+              type="button"
+              id="dropdownMenuButton"
+              data-toggle="dropdown"
             >
-              <EditOutlined />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-three-dots"
+                viewBox="0 0 16 16"
+              >
+                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+              </svg>
             </button>
+            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a
+                className="dropdown-item"
+                onClick={() => {
+                  navigate(`edit/${listProject[index].id}`);
+                }}
+              >
+                Edit Project
+              </a>
+              <a
+                className="dropdown-item"
+                onClick={() => {
+                  confirm({
+                    title: ` Do you want delete project: 
+                    ${item.projectName} ?`,
+                    icon: <ExclamationCircleFilled />,
+                    okText: "Delete",
+                    okType: "danger",
+                    cancelType: "primary",
+                    onOk: async () => {
+                      if (dataUserLogin.id == listProject[index].creator.id) {
+                        const res = await dispatch(callDeleteProject(item.id));
+                        if (res.isDelete == true) {
+                          openNotificationDeleteProject();
+                        }
+                        dispatch(callGetListProject(keyWord));
+                      } else {
+                        errUnthor();
+                      }
+                    },
+                    onCancel() {},
+                  });
+                }}
+              >
+                {" "}
+                Delete project
+              </a>
+            </div>
           </div>
-          <div className="pl-3">
-            <button
-              className="btn"
-              style={{ backgroundColor: "red" }}
-              onClick={() => {
-                if (
-                  window.confirm(
-                    `Do you want to delete project : ${listProject[index].projectName} `
-                  )
-                ) {
-                  dispatch(callDeleteProject(item.id));
-                }
-              }}
-            >
-              <DeleteOutlined />
-            </button>
-          </div>
-        </div>,
+        </>,
       ],
     };
   });
   return (
-    <main className="container py-6">
+    <main className="containerProject container py-6">
       {isLogin ? (
-        <div>
+        <>
           <div className="d-flex content-start">
             <h3>Project</h3>
           </div>
-          <form className="form-inline my-2 my-lg-0">
-            <input
-              placeholder=""
-              style={{
-                width: 200,
-                paddingBottom: 10,
-                border: "gray solid 1px",
-                borderRadius: 5,
-              }}
-              value={keyWord}
-              onChange={(event) => {
-                let { value } = event.target;
-                setSearchParams({ keyWord: value });
-              }}
-            />
-            <SearchOutlined />
-          </form>
+          <div className="d-flex align-items-center justify-content-between">
+            <form>
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search"
+                  value={keyWord}
+                  onChange={(event) => {
+                    let { value } = event.target;
+                    setSearchParams({ keyWord: value });
+                  }}
+                />
+                <div className="input-group-btn">
+                  <button className="btn btn-default">
+                    <i className="glyphicon glyphicon-search" />
+                  </button>
+                </div>
+              </div>
+            </form>
+            <div>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  navigate("/createProject");
+                }}
+              >
+                Create Project
+              </button>
+            </div>
+          </div>
+
           <br />
           <Table columns={columns} dataSource={data} />
-        </div>
+        </>
       ) : (
         <Result
           className="col-12"

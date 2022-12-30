@@ -3,12 +3,24 @@ import { callGetProjectCategory } from "../../../redux/reducers/projects/getProj
 import { callGetListProjectDetail } from "../../../redux/reducers/projects/getProjectDetail";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Form, Input, Select } from "antd";
+import { Button, Form, Input, notification, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useParams } from "react-router-dom";
 import { callUpdateProject } from "../../../redux/reducers/projects/updateProject";
 import "./css/main.css";
 export default function EditProject() {
+  const openNotificationSuccess = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Update project successfully !",
+    });
+  };
+  const err = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "Update project fail !",
+    });
+  };
   const [loading, setLoading] = useState(false);
   const params = useParams();
   let dispatch = useDispatch();
@@ -27,8 +39,15 @@ export default function EditProject() {
       description: listProjectDetail.description,
       categoryId: listProjectDetail.projectCategory?.id,
     },
-    onSubmit: (values) => {
-      dispatch(callUpdateProject(listProjectDetail.id, values));
+    onSubmit: async (values) => {
+      const res = await dispatch(
+        callUpdateProject(listProjectDetail.id, values)
+      );
+      if (res.isUpdate == true) {
+        openNotificationSuccess();
+      } else {
+        err();
+      }
     },
   });
   const handleChangeProjectCategogy = (values) => {

@@ -22,11 +22,15 @@ export default createProject.reducer
 
 export const callCreateProject = (data) => async () => {
     try {
-        console.log(data);
         const apiCreateProject = await http.post("/Project/createProjectAuthorize", data)
         history.push("/projectmanagement")
-        alert(`Create project ${apiCreateProject.data.content.projectName} success!`)
+        return { isCreate: true }
     } catch (err) {
-        alert(err.response.data.content);
+        if (err.response.data.statusCode == 500) {
+            return { isExist: true }
+        }
+        else {
+            return { isCreate: false }
+        }
     }
 }

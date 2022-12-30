@@ -36,7 +36,12 @@ export default function Projectmanagement() {
             >
               <div className="container-fluid">
                 <ProjectOutlined style={{ fontSize: "35px", color: "blue" }} />
-                <a className="navbar-brand" href="/projectmanagement">
+                <a
+                  className="navbar-brand"
+                  onClick={() => {
+                    navigate("/projectmanagement");
+                  }}
+                >
                   Jira
                 </a>
                 <button
@@ -59,7 +64,6 @@ export default function Projectmanagement() {
                     <li className="nav-item dropdown">
                       <a
                         className="nav-link dropdown-toggle active"
-                        href="#"
                         id="navbarDropdownMenuLink"
                         role="button"
                         data-bs-toggle="dropdown"
@@ -75,15 +79,19 @@ export default function Projectmanagement() {
                         <div>
                           <a
                             className="dropdown-item p-3"
-                            href="/projectmanagement"
+                            onClick={() => {
+                              navigate("/projectmanagement");
+                            }}
                           >
                             <button>View all project</button>
                           </a>
                           <a
                             className="dropdown-item p-3"
-                            href="/createProject"
+                            onClick={() => {
+                              navigate("/createProject");
+                            }}
                           >
-                            Create Project
+                            <button>Create Project</button>
                           </a>
                         </div>
                       </ul>
@@ -97,7 +105,6 @@ export default function Projectmanagement() {
                     <li className="nav-item dropdown pl-2">
                       <a
                         className="nav-link dropdown-toggle"
-                        href="#"
                         id="navbarDropdownMenuLink"
                         role="button"
                         data-bs-toggle="dropdown"
@@ -110,7 +117,12 @@ export default function Projectmanagement() {
                         className="dropdown-menu"
                         aria-labelledby="navbarDropdownMenuLink"
                       >
-                        <button className="dropdown-item" href="/user">
+                        <button
+                          className="dropdown-item"
+                          onClick={() => {
+                            navigate("/user");
+                          }}
+                        >
                           View all users
                         </button>
                       </ul>
@@ -122,11 +134,7 @@ export default function Projectmanagement() {
                 <ul className="navbar-nav">
                   <Tooltip placement="bottom">
                     <li className="nav-item">
-                      <a
-                        className="nav-link"
-                        href="#"
-                        style={{ color: "blue" }}
-                      >
+                      <a className="nav-link" style={{ color: "blue" }}>
                         Create Task
                       </a>
                     </li>
@@ -143,7 +151,6 @@ export default function Projectmanagement() {
                   <li className="nav-item dropdown">
                     <a
                       className="nav-link "
-                      href="#"
                       id="navbarDropdownMenuLink"
                       role="button"
                       data-bs-toggle="dropdown"
@@ -165,7 +172,7 @@ export default function Projectmanagement() {
                             ATLASSIAN ADMIN
                           </span>
                         </div>
-                        <a className="dropdown-item" href="#">
+                        <a className="dropdown-item">
                           <button
                             onClick={() => {
                               navigate(``);
@@ -182,7 +189,7 @@ export default function Projectmanagement() {
                         >
                           <span className="text-gray-400 ">JIRA SETTING</span>
                         </div>
-                        <a className="dropdown-item" href="#">
+                        <a className="dropdown-item">
                           <button
                             onClick={() => {
                               navigate(`/projectmanagement`);
@@ -208,7 +215,6 @@ export default function Projectmanagement() {
                   <li className="nav-item dropdown">
                     <a
                       className="nav-link "
-                      href="#"
                       id="navbarDropdownMenuLink"
                       role="button"
                       data-bs-toggle="dropdown"
@@ -238,10 +244,10 @@ export default function Projectmanagement() {
                         >
                           <span className="text-gray-400 ">Admin</span>
                         </div>
-                        <a className="dropdown-item" href="#">
+                        <a className="dropdown-item">
                           <button
                             onClick={() => {
-                              navigate(``);
+                              navigate(`profile`);
                             }}
                           >
                             Profiles
@@ -249,7 +255,7 @@ export default function Projectmanagement() {
                         </a>
                       </div>
                       <div>
-                        <a className="dropdown-item" href="#">
+                        <a className="dropdown-item">
                           <button
                             onClick={() => {
                               setReset(reset + 1);
