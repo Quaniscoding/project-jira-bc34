@@ -1,27 +1,139 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ProjectOutlined, SettingOutlined } from "@ant-design/icons";
-import { Avatar, Tooltip } from "antd";
+import {
+  Avatar,
+  Tooltip,
+  Button,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Slider,
+  InputNumber,
+  notification,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import { DATA_USER, USER_LOGIN } from "../../utils/constant";
-import { getLocal, getStringLocal } from "../../utils/config";
+import { getLocal } from "../../utils/config";
 import "./css/adminMainCss.css";
-export default function Projectmanagement() {
-  const links = document.querySelectorAll(".nav-link");
-  if (links.length != "") {
-    links.forEach((link) => {
-      link.addEventListener("click", (e) => {
-        links.forEach((link) => {
-          link.classList.remove("active");
-        });
-        e.preventDefault();
-        link.classList.add("active");
-      });
+import { useDispatch, useSelector } from "react-redux";
+import { callGetListProject } from "../../redux/reducers/projects/getAllProject";
+import { callGetListTaskType } from "./../../redux/reducers/task/getAllTaskType";
+import { callGetListPriority } from "./../../redux/reducers/task/getAllPriority";
+import { callGetListStatus } from "./../../redux/reducers/task/getAllStatus";
+import { callGetListProjectDetail } from "./../../redux/reducers/projects/getProjectDetail";
+import { callCreateTask } from "./../../redux/reducers/task/createTask";
+import { callGetListUserByProjectId } from "./../../redux/reducers/users/getUserByProjectId";
+export default function HeaderAdmin() {
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  const [inputValue, setInputValue] = useState(1);
+  const [inputValueHourSpent, setInputValueHourSpent] = useState(1);
+  const onChange = (newValue) => {
+    setInputValue(newValue);
+  };
+  const onChangeHourSpent = (newValue) => {
+    setInputValueHourSpent(newValue);
+  };
+  const openNotificationSuccess = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Create task successfully !",
     });
-  }
+  };
+  const err = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "Task name already exists !",
+    });
+  };
+  const errUnthor = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "User is unthorization!",
+    });
+  };
   const navigate = useNavigate();
   let [reset, setReset] = useState(0);
-  let isLogin = getStringLocal(USER_LOGIN);
+  let [getProjectId, setProjectId] = useState(0);
   let dataUser = getLocal(DATA_USER);
+  const listAllProject = useSelector(
+    (state) => state.getAllProject.listProject
+  );
+  const listStatus = useSelector((state) => state.getAllStatus.listStatus);
+  const listPriority = useSelector(
+    (state) => state.getAllPriority.listPriority
+  );
+  const listTaskType = useSelector(
+    (state) => state.getAllTaskType.listTaskType
+  );
+  const listUserByProjectId = useSelector(
+    (state) => state.getListUserByProjectId.listUser
+  );
+  let dispatch = useDispatch();
+  let timeout = null;
+  if (timeout != null) {
+    clearTimeout(timeout);
+  }
+  const onSubmit = async (values) => {
+    let timeTrackingRemaining = inputValue - inputValueHourSpent;
+    let originalEstimate = inputValue;
+    let projectId = getProjectId;
+    let {
+      taskName,
+      timeTrackingSpent,
+      description,
+      statusId,
+      typeId,
+      priorityId,
+      listUserAsign,
+    } = values;
+    try {
+      const res = await dispatch(
+        callCreateTask({
+          timeTrackingRemaining,
+          originalEstimate,
+          projectId,
+          taskName,
+          timeTrackingSpent,
+          description,
+          statusId,
+          typeId,
+          priorityId,
+          listUserAsign,
+        })
+      );
+      if (res.isCreate == true) {
+        openNotificationSuccess();
+      }
+      if (res.isUnthor == true) {
+        errUnthor();
+      }
+      if (res.isCreate == false) {
+        err();
+      }
+    } catch (error) {
+      err();
+    }
+  };
+  useEffect(() => {
+    timeout = setTimeout(() => {
+      dispatch(callGetListProject(""));
+      dispatch(callGetListTaskType);
+      dispatch(callGetListPriority);
+      dispatch(callGetListStatus);
+      dispatch(callGetListProjectDetail);
+    }, 1000);
+  }, [0]);
   return (
     <>
       <header
@@ -36,14 +148,14 @@ export default function Projectmanagement() {
             >
               <div className="container-fluid">
                 <ProjectOutlined style={{ fontSize: "35px", color: "blue" }} />
-                <a
+                <button
                   className="navbar-brand"
                   onClick={() => {
                     navigate("/projectmanagement");
                   }}
                 >
-                  Jira
-                </a>
+                  <button>Jira</button>
+                </button>
                 <button
                   className="navbar-toggler "
                   type="button"
@@ -57,7 +169,10 @@ export default function Projectmanagement() {
                 </button>
               </div>
             </nav>
-            <form className="d-flex align-items-center">
+            <div
+              className="d-flex align-items-center"
+              style={{ width: "315px" }}
+            >
               <div className="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul className="navbar-nav">
                   <Tooltip placement="bottom">
@@ -117,14 +232,24 @@ export default function Projectmanagement() {
                         className="dropdown-menu"
                         aria-labelledby="navbarDropdownMenuLink"
                       >
-                        <button
-                          className="dropdown-item"
-                          onClick={() => {
-                            navigate("/user");
-                          }}
-                        >
-                          View all users
-                        </button>
+                        <div>
+                          <a
+                            className="dropdown-item"
+                            onClick={() => {
+                              navigate("/user");
+                            }}
+                          >
+                            <button>View all users</button>
+                          </a>
+                          <a
+                            className="dropdown-item"
+                            onClick={() => {
+                              navigate("user/createUser");
+                            }}
+                          >
+                            <button>Create users</button>
+                          </a>
+                        </div>
                       </ul>
                     </li>
                   </Tooltip>
@@ -135,16 +260,210 @@ export default function Projectmanagement() {
                   <Tooltip placement="bottom">
                     <li className="nav-item">
                       <a className="nav-link" style={{ color: "blue" }}>
-                        Create Task
+                        <button onClick={showDrawer}>Create Task</button>
+                        <Drawer
+                          closable={false}
+                          zIndex={1050}
+                          title="Create task"
+                          width={720}
+                          onClose={onClose}
+                          open={open}
+                          bodyStyle={{
+                            paddingBottom: 80,
+                          }}
+                        >
+                          <Form
+                            layout="vertical"
+                            onFinish={onSubmit}
+                            initialValues={true}
+                          >
+                            <Form.Item label="Project" required>
+                              <Select
+                                initialValues={listAllProject[0]?.projectName}
+                                placeholder="Project"
+                              >
+                                {listAllProject.map((item, index) => {
+                                  return (
+                                    <Select.Option key={index}>
+                                      <button
+                                        onClick={() => {
+                                          setProjectId(item.id);
+                                          dispatch(
+                                            callGetListUserByProjectId(item.id)
+                                          );
+                                        }}
+                                      >
+                                        {item.projectName}
+                                      </button>
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                              <span className="font-bold font-monospace">
+                                * You can only create tasks of your own
+                                projects!
+                              </span>
+                            </Form.Item>
+                            <Form.Item
+                              name="taskName"
+                              label="Task Name"
+                              required
+                            >
+                              <Input placeholder="Task Name" />
+                            </Form.Item>
+                            <Form.Item name="statusId" label="Status" required>
+                              <Select placeholder="Status">
+                                {listStatus.map((item) => {
+                                  return (
+                                    <Select.Option value={item.statusId}>
+                                      {item.statusName}
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </Form.Item>
+                            <Row gutter={16}>
+                              <Col span={12}>
+                                <Form.Item
+                                  name="priorityId"
+                                  label="Priority"
+                                  required
+                                >
+                                  <Select placeholder="Priority">
+                                    {listPriority.map((item, index) => {
+                                      return (
+                                        <Select.Option
+                                          key={index}
+                                          value={item.priorityId}
+                                        >
+                                          {item.priority}
+                                        </Select.Option>
+                                      );
+                                    })}
+                                  </Select>
+                                </Form.Item>
+                              </Col>
+                              <Col span={12}>
+                                <Form.Item name="typeId" label="Task Type">
+                                  <Select placeholder="Task Type">
+                                    {listTaskType.map((item) => {
+                                      return (
+                                        <Select.Option value={item.id}>
+                                          {item.taskType}
+                                        </Select.Option>
+                                      );
+                                    })}
+                                  </Select>
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                            <Form.Item
+                              name="listUserAsign"
+                              label="Assigners"
+                              required
+                            >
+                              <Select
+                                placeholder="Assigners"
+                                mode="multiple"
+                                style={{
+                                  width: "100%",
+                                }}
+                              >
+                                {listUserByProjectId.map((item) => {
+                                  return (
+                                    <Select.Option value={item.userId}>
+                                      <div className="demo-option-label-item">
+                                        <span role="img">
+                                          <button>{item.name}</button>
+                                        </span>
+                                      </div>
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </Form.Item>
+                            <Row gutter={16} className="d-flex">
+                              <Col span={12}>
+                                <Form.Item
+                                  label={"Total Estimated Hours"}
+                                  required
+                                >
+                                  <InputNumber
+                                    type="number"
+                                    defaultValue={0}
+                                    value={inputValue}
+                                    onChange={onChange}
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={12}>
+                                <Form.Item
+                                  name={"timeTrackingSpent"}
+                                  label={"Hours spent"}
+                                  required
+                                >
+                                  <InputNumber
+                                    type="number"
+                                    defaultValue={0}
+                                    value={inputValueHourSpent}
+                                    onChange={onChangeHourSpent}
+                                  />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                            <Form.Item>
+                              <Slider
+                                tooltip={{
+                                  open: true,
+                                }}
+                                marks={0}
+                                min={0}
+                                max={inputValue}
+                                style={{ color: "black" }}
+                                defaultValue={10}
+                                value={inputValueHourSpent}
+                              />
+                              <div className="flex justify-between">
+                                <div className="text-left  font-bold">
+                                  {inputValueHourSpent} hour(s) spent
+                                </div>
+                                <div className="text-left  font-bold">
+                                  {inputValue - inputValueHourSpent} hour(s)
+                                  remaining
+                                </div>
+                              </div>
+                            </Form.Item>
+                            <Form.Item
+                              label="Desciption"
+                              name="description"
+                              required
+                            >
+                              <Input.TextArea rows={6} />
+                            </Form.Item>
+                            <Form.Item>
+                              <Space>
+                                <Button onClick={onClose}>Cancel</Button>
+                                <Button
+                                  htmlType="submit"
+                                  type="primary"
+                                  onClick={() => {
+                                    navigate("/projectmanagement");
+                                  }}
+                                >
+                                  Submit
+                                </Button>
+                              </Space>
+                            </Form.Item>
+                          </Form>
+                        </Drawer>
                       </a>
                     </li>
                   </Tooltip>
                 </ul>
               </div>
-            </form>
+            </div>
           </div>
-
-          <form className="d-flex">
+          <div className="d-flex">
             <div className="collapse navbar-collapse" id="navbarNavDropdown">
               <ul className="navbar-nav">
                 <Tooltip title={<span className="text-black">Setting</span>}>
@@ -175,7 +494,7 @@ export default function Projectmanagement() {
                         <a className="dropdown-item">
                           <button
                             onClick={() => {
-                              navigate(``);
+                              navigate(`user`);
                             }}
                           >
                             User management
@@ -272,7 +591,7 @@ export default function Projectmanagement() {
                 </Tooltip>
               </ul>
             </div>
-          </form>
+          </div>
         </div>
       </header>
       <div className="header-placehoder" style={{ height: "7.5rem" }}></div>

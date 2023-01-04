@@ -1,0 +1,26 @@
+:where(.css-dev-only-do-not-override-fk4p14).ant-list
+  .ant-list-item
+  .ant-list-item-meta {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  max-width: 100%;
+}
+.ant-badge-status {
+  line-height: inherit;
+  vertical-align: initial;
+}
+.ant-badge {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: "tnum", "tnum";
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+}

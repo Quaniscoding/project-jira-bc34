@@ -1,9 +1,10 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import "./css/userMain.css";
+import "./css/authMain.css";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, notification } from "antd";
-import { callLogin } from "../../redux/reducers/users/userLogin";
+import { callLogin } from "../../redux/reducers/auth/userLogin";
+
 export default function Login() {
   let navigate = useNavigate();
   let dispatch = useDispatch();

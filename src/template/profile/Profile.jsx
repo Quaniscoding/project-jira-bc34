@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getLocal } from "../../utils/config";
 import { DATA_USER } from "./../../utils/constant";
 import { Avatar, Button, Form, Input, notification } from "antd";

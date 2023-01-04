@@ -1,15 +1,11 @@
 import React from "react";
-import "./css/userMain.css";
-
+import "./css/authMain.css";
 import { useDispatch } from "react-redux";
-import { USER_LOGIN } from "../../utils/constant";
-import { getStringLocal } from "../../utils/config";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, notification } from "antd";
-import { callSignUp } from "../../redux/reducers/users/userSignUp";
+import { callSignUp } from "../../redux/reducers/auth/userSignUp";
 export default function SignUp() {
   let navigate = useNavigate();
-  let isLogin = getStringLocal(USER_LOGIN);
   let dispatch = useDispatch();
   const onSubmit = async (values) => {
     try {

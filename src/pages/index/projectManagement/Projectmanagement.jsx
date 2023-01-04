@@ -228,7 +228,7 @@ export default function Projectmanagement() {
               </>
             ))}
           </Avatar.Group>{" "}
-          {listUser.map((item, index) => {
+          {listUser.map((item) => {
             dataUser.userId = item.userId;
           })}
           <button

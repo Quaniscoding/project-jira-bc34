@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { notification } from 'antd';
 import { http } from '../../../utils/baseUrl';
 import { history } from '../../../utils/history';
 const initialState = {
@@ -21,6 +20,7 @@ export const callSignUp = (userLogin) => async () => {
         history.push("/login")
         return { isSignUp: true }
     } catch (err) {
+        console.log(err);
         return new Promise((resolve, reject) =>
             resolve({ isError: true }));
     }
