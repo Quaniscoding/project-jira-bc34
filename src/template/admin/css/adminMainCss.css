@@ -15,6 +15,17 @@ a.nav-link:hover {
 }
 /* iphone 6,7,8*/
 @media (min-width: 375px) and (max-width: 667px) {
+  .navbar > .container,
+  .navbar > .container-fluid,
+  .navbar > .container-lg,
+  .navbar > .container-md,
+  .navbar > .container-sm,
+  .navbar > .container-xl,
+  .navbar > .container-xxl {
+    display: flex;
+    flex-wrap: unset;
+    align-items: center;
+  }
   main.container {
     height: 1059px;
   }
@@ -29,6 +40,17 @@ a.nav-link:hover {
 /* iphone 12*/
 
 @media (min-width: 390px) and (max-width: 844px) {
+  .navbar > .container,
+  .navbar > .container-fluid,
+  .navbar > .container-lg,
+  .navbar > .container-md,
+  .navbar > .container-sm,
+  .navbar > .container-xl,
+  .navbar > .container-xxl {
+    display: flex;
+    flex-wrap: unset;
+    align-items: center;
+  }
   main.container {
     height: 1243px;
   }

@@ -1,21 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa&display=swap");
 body {
-  font-family: 'Roboto', cursive;
+  font-family: "Roboto", cursive;
+}
+html,
+body {
+  overflow-x: hidden;
 }
 a {
   color: inherit;
   text-decoration: none !important;
 }
-ul.nav.flex-column li a.nav-link{
+ul.nav.flex-column li a.nav-link {
   color: black;
 }
-ul.nav.flex-column li a.nav-link.active{
- font-weight: bold;
+ul.nav.flex-column li a.nav-link.active {
+  font-weight: bold;
 }
-.d-flex.justify-content-start{
+.d-flex.justify-content-start {
   padding-left: 30px;
 }
-.btn-danger,.btn-danger:hover {
+.btn-danger,
+.btn-danger:hover {
   color: #fff;
   background-color: #d9534f;
   border-radius: 50% !important;
@@ -29,14 +34,14 @@ ul.nav.flex-column li a.nav-link.active{
   text-align: start;
   text-decoration: none;
   word-wrap: break-word;
-  background-color:white !important;
+  background-color: white !important;
   border-radius: 100px;
 }
 
-@media (min-width: 1200px){
+@media (min-width: 1200px) {
   .container {
     width: 100%;
-}
+  }
 }
 
 .loader-container {
@@ -44,8 +49,8 @@ ul.nav.flex-column li a.nav-link.active{
   height: 100vh;
   position: fixed;
   background: rgba(0, 0, 0, 0.834)
-      url("https://media.giphy.com/media/8agqybiK5LW8qrG3vJ/giphy.gif") center
-      no-repeat;
+    url("https://media.giphy.com/media/8agqybiK5LW8qrG3vJ/giphy.gif") center
+    no-repeat;
   z-index: 1;
 }
 .loader-container {
@@ -70,13 +75,12 @@ ul.nav.flex-column li a.nav-link.active{
 
 @keyframes spin-anim {
   0% {
-      transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
-@media(min-width: 375px) and (max-width: 667px) {
-  
+@media (min-width: 375px) and (max-width: 667px) {
 }

@@ -124,11 +124,15 @@ export default function EditProject() {
                   name="categoryId"
                   onChange={handleChangeProjectCategogy}
                   defaultValue={listProjectDetail?.projectCategory?.name}
-                  options={projectCategogy.map((item) => ({
-                    label: item.projectCategoryName,
-                    value: item.id,
-                  }))}
-                />
+                >
+                  {projectCategogy.map((item) => {
+                    return (
+                      <Select.Option value={item.id}>
+                        {item.projectCategoryName}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
               <Form.Item className="d-flex">
                 <Button type="primary" htmlType="submit">

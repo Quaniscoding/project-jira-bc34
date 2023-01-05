@@ -48,6 +48,7 @@ export default function HeaderAdmin() {
     notification["success"]({
       message: "Notification !",
       description: "Create task successfully !",
+      placement: "top",
     });
   };
   const err = () => {
@@ -113,6 +114,7 @@ export default function HeaderAdmin() {
         })
       );
       if (res.isCreate == true) {
+        onClose();
         openNotificationSuccess();
       }
       if (res.isUnthor == true) {
@@ -147,6 +149,7 @@ export default function HeaderAdmin() {
               style={{ marginBottom: 0 }}
             >
               <div className="container-fluid">
+                <div></div>
                 <ProjectOutlined style={{ fontSize: "35px", color: "blue" }} />
                 <button
                   className="navbar-brand"
@@ -154,7 +157,7 @@ export default function HeaderAdmin() {
                     navigate("/projectmanagement");
                   }}
                 >
-                  <button>Jira</button>
+                  <a>Jira</a>
                 </button>
                 <button
                   className="navbar-toggler "
@@ -443,13 +446,7 @@ export default function HeaderAdmin() {
                             <Form.Item>
                               <Space>
                                 <Button onClick={onClose}>Cancel</Button>
-                                <Button
-                                  htmlType="submit"
-                                  type="primary"
-                                  onClick={() => {
-                                    navigate("/projectmanagement");
-                                  }}
-                                >
+                                <Button htmlType="submit" type="primary">
                                   Submit
                                 </Button>
                               </Space>

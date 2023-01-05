@@ -122,9 +122,10 @@ export default function CreateProject() {
                 ]}
               >
                 <Select>
-                  {projectCategogy.map((item, index) => {
+                  {projectCategogy.map((item) => {
+                    console.log(projectCategogy);
                     return (
-                      <Select.Option value={index}>
+                      <Select.Option value={item.id}>
                         {item.projectCategoryName}
                       </Select.Option>
                     );

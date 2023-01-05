@@ -19,8 +19,6 @@ export const callAsignUserFromProject = (data) => async () => {
         const apiAsignUserFromProject = await http.post("/Project/assignUserProject", data);
         return { isAsign: true }
     } catch (err) {
-        console.log(err.response.data.content);
-        console.log(err);
         if (err.response.data.statusCode == 500) {
             return { isAsign: false }
         }

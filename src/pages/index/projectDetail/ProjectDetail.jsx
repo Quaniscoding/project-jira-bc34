@@ -12,6 +12,7 @@ import {
   List,
   Button,
   notification,
+  Form,
 } from "antd";
 import {
   PlusOutlined,
@@ -50,7 +51,7 @@ export default function ProjectDetail() {
       description: "User is unthorization!",
     });
   };
-  const openNotificationAsignUserFromProject = () => {
+  const openNotificationAsignUserFromTask = () => {
     notification["success"]({
       message: "Notification !",
       description: "Asign user successfully !",
@@ -81,8 +82,11 @@ export default function ProjectDetail() {
   const keyWord = searchParams.has("keyWord")
     ? searchParams.get("keyWord")
     : "";
+  let [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     timeout = setTimeout(() => {
+      setLoading(false);
       dispatch(callGetListUser(keyWord));
       dispatch(callGetListProjectDetail(params.id));
       // dispatch(callGetListTaskDetail());
@@ -127,30 +131,40 @@ export default function ProjectDetail() {
                       <CheckOutlined className="bg-green-500 rounded text-white" />
                     );
                   }
-                  console.log(item.taskTypeDetail.taskType);
                   return (
                     <div className="border border-danger rounded border-3 mt-2">
                       <div className="mt-2 bg-white p-2 shadow rounded">
                         <div className="d-flex justify-content-between">
                           <div className="d-flex align-items-center">
-                            {taskType}
+                            Task type : {taskType}
                             <b> {item.taskTypeDetail.taskType}</b>
                           </div>
                           <div className="text-right mt-2">
                             <button
                               className="btn bg-danger text-white font-bold"
-                              onClick={async () => {
-                                try {
-                                  const res = await dispatch(
-                                    callDeleteTask(item.taskId)
-                                  );
-                                  if (res.isDelete == true) {
-                                    openNotificationDeleteTask();
-                                  } else {
-                                    err();
-                                  }
-                                  dispatch(callGetListProjectDetail(params.id));
-                                } catch (error) {}
+                              onClick={() => {
+                                confirm({
+                                  title: "Do you want delete this task ?",
+                                  icon: <ExclamationCircleFilled />,
+                                  okText: "Delete",
+                                  okType: "danger",
+                                  cancelType: "primary",
+                                  onOk: async () => {
+                                    try {
+                                      const res = await dispatch(
+                                        callDeleteTask(item.taskId)
+                                      );
+                                      if (res.isDelete == true) {
+                                        openNotificationDeleteTask();
+                                      } else {
+                                        err();
+                                      }
+                                      dispatch(
+                                        callGetListProjectDetail(params.id)
+                                      );
+                                    } catch (error) {}
+                                  },
+                                });
                               }}
                             >
                               X
@@ -167,8 +181,15 @@ export default function ProjectDetail() {
                         >
                           <div className="modal-dialog" role="document">
                             <div className="modal-content">
-                              <div className="modal-body">
-                                <div className="d-flex justify-content-between align-items-center"></div>
+                              <div
+                                className="modal-body"
+                                // style={{ width: 1000 }}
+                              >
+                                <div className="d-flex justify-content-between align-items-center">
+                                  <Form initialValues={true}>
+                                    <Form.Item></Form.Item>
+                                  </Form>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -181,9 +202,11 @@ export default function ProjectDetail() {
                         >
                           <div className="row row-gap-0">
                             <div className="col-8">
-                              <div className="mb-2">{item.description}</div>
+                              <div className="mb-2">
+                                Description: {item.description}
+                              </div>
                               <span className="text-xl rounded px-1 pb-0.5 text-orange-700 border border-orange-700">
-                                {item.priorityTask.priority}
+                                Priority: {item.priorityTask.priority}
                               </span>
                             </div>
                             <div className="col-4">
@@ -298,9 +321,7 @@ export default function ProjectDetail() {
                             />
                             <div>
                               <Button
-                                data-toggle="tooltip"
                                 data-placement="top"
-                                title="Double click to add !"
                                 type="primary"
                                 onClick={() => {
                                   data.projectId = params.id;
@@ -317,17 +338,17 @@ export default function ProjectDetail() {
                                           callAsignUserFromProject(data)
                                         );
                                         if (res.isAsign == true) {
-                                          openNotificationAsignUserFromProject();
+                                          openNotificationAsignUserFromTask();
                                         }
                                         if (res.isUnthor == true) {
                                           errUnthor();
-                                        } else {
-                                          errUser();
                                         }
                                         await dispatch(
                                           callGetListProjectDetail(params.id)
                                         );
-                                      } catch (error) {}
+                                      } catch (error) {
+                                        errUser();
+                                      }
                                     },
                                     onCancel() {},
                                   });
@@ -356,9 +377,7 @@ export default function ProjectDetail() {
                         />
                         <div>
                           <button
-                            data-toggle="tooltip"
                             data-placement="top"
-                            title="Double click to remove !"
                             className="btn bg-red-600 bg-red-700 hover:bg-red-600 focus:bg-red-600 text-white hover:text-white focus:text-white"
                             onClick={() => {
                               let data = {

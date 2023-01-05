@@ -254,22 +254,36 @@ export default function Projectmanagement() {
                                 <button
                                   className="btn btn-white text-black pb-1"
                                   key={index}
-                                  onClick={async () => {
+                                  onClick={() => {
                                     dataUser.userId = item.userId;
-                                    if (dataUser.projectId != "") {
-                                      const res = await dispatch(
-                                        callAsignUserFromProject(dataUser)
-                                      );
-                                      if (res.isAsign == true) {
-                                        openNotificationAsignUserFromProject();
-                                      }
-                                      if (res.isUnthor == true) {
-                                        errUnthor();
-                                      } else {
-                                        err();
-                                      }
-                                      dispatch(callGetListProject(keyWord));
-                                    }
+                                    confirm({
+                                      title: "Do you want to asign this user ?",
+                                      icon: <ExclamationCircleFilled />,
+                                      okText: "Add",
+                                      okType: "primary",
+                                      cancelType: "primary",
+                                      onOk: async () => {
+                                        try {
+                                          if (dataUser.projectId != "") {
+                                            const res = await dispatch(
+                                              callAsignUserFromProject(dataUser)
+                                            );
+                                            if (res.isAsign == true) {
+                                              openNotificationAsignUserFromProject();
+                                            }
+                                            if (res.isUnthor == true) {
+                                              errUnthor();
+                                            }
+                                            await dispatch(
+                                              callGetListProject(keyWord)
+                                            );
+                                          }
+                                        } catch (error) {
+                                          console.log(error);
+                                          err();
+                                        }
+                                      },
+                                    });
                                   }}
                                 >
                                   {item.name}
