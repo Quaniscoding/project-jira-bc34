@@ -20,7 +20,7 @@ export const { getlistTaskDetail } = getTaskDetail.actions
 export default getTaskDetail.reducer
 export const callGetListTaskDetail = (taskId) => async (dispatch) => {
     try {
-        const apiGetProject = await http.get(`/Projcet/getTaskDetail?taskId=${taskId}`)
+        const apiGetProject = await http.get(`/Project/getTaskDetail?taskId=${taskId}`)
         dispatch(getlistTaskDetail(apiGetProject.data.content));
     } catch (err) {
         console.log(err);

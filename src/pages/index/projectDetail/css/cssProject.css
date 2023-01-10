@@ -24,3 +24,16 @@
   display: inline-block;
   line-height: 1;
 }
+:where(.css-dev-only-do-not-override-1vui4uo).ant-tooltip .ant-tooltip-inner {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 6px 8px;
+  color: black;
+  text-align: start;
+  text-decoration: none;
+  word-wrap: break-word;
+  background-color: rgba(0, 0, 0, 0.85);
+  border-radius: 6px;
+  box-shadow: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%),
+    0 9px 28px 8px rgb(0 0 0 / 5%);
+}

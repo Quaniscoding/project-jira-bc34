@@ -416,9 +416,6 @@ export default function HeaderAdmin() {
                             </Row>
                             <Form.Item>
                               <Slider
-                                tooltip={{
-                                  open: true,
-                                }}
                                 marks={0}
                                 min={0}
                                 max={inputValue}

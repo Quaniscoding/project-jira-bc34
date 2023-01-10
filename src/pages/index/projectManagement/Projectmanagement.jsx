@@ -274,12 +274,14 @@ export default function Projectmanagement() {
                                             if (res.isUnthor == true) {
                                               errUnthor();
                                             }
-                                            await dispatch(
+                                            if (res.isAsign == false) {
+                                              err();
+                                            }
+                                            dispatch(
                                               callGetListProject(keyWord)
                                             );
                                           }
                                         } catch (error) {
-                                          console.log(error);
                                           err();
                                         }
                                       },
@@ -352,15 +354,19 @@ export default function Projectmanagement() {
                     okType: "danger",
                     cancelType: "primary",
                     onOk: async () => {
-                      if (dataUserLogin.id == listProject[index].creator.id) {
-                        const res = await dispatch(callDeleteProject(item.id));
-                        if (res.isDelete == true) {
-                          openNotificationDeleteProject();
+                      try {
+                        if (dataUserLogin.id == listProject[index].creator.id) {
+                          const res = await dispatch(
+                            callDeleteProject(item.id)
+                          );
+                          if (res.isDelete == true) {
+                            openNotificationDeleteProject();
+                          }
+                          dispatch(callGetListProject(keyWord));
+                        } else {
+                          errUnthor();
                         }
-                        dispatch(callGetListProject(keyWord));
-                      } else {
-                        errUnthor();
-                      }
+                      } catch (error) {}
                     },
                     onCancel() {},
                   });

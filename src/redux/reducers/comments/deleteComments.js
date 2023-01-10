@@ -1,0 +1,25 @@
+import { createSlice } from '@reduxjs/toolkit'
+import { http } from '../../../utils/baseUrl';
+
+const initialState = {
+
+}
+
+const deleteComments = createSlice({
+    name: "deleteComments",
+    initialState,
+    reducers: {}
+});
+
+export const { } = deleteComments.actions
+
+export default deleteComments.reducer
+export const callDeleteComments = (commentsId) => async () => {
+    try {
+        const apiDeleteComments = await http.delete(`/Comment/deleteComment?idComment=${commentsId}`)
+        return { isDelete: true }
+    } catch (error) {
+        console.log(error);
+        return { isDelete: false }
+    }
+}

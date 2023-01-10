@@ -16,7 +16,6 @@ export const { } = createTask.actions
 export default createTask.reducer
 export const callCreateTask = (data) => async () => {
     try {
-        console.log(data);
         const apiCreateTask = await http.post("/Project/createTask", data)
         return { isCreate: true }
     } catch (err) {

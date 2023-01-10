@@ -14,11 +14,11 @@ export const { } = asignUserFromProJet.actions
 export default asignUserFromProJet.reducer
 
 export const callAsignUserFromProject = (data) => async () => {
-    console.log(data);
     try {
         const apiAsignUserFromProject = await http.post("/Project/assignUserProject", data);
         return { isAsign: true }
     } catch (err) {
+        console.log(err);
         if (err.response.data.statusCode == 500) {
             return { isAsign: false }
         }

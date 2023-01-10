@@ -13,9 +13,12 @@ import {
   Button,
   notification,
   Form,
+  Select,
+  Collapse,
+  Tooltip,
 } from "antd";
 import {
-  PlusOutlined,
+  DeleteOutlined,
   CheckOutlined,
   UserOutlined,
   ExclamationCircleFilled,
@@ -29,7 +32,18 @@ import { callGetListTaskDetail } from "../../../redux/reducers/task/getTaskDetai
 import { callDeleteTask } from "../../../redux/reducers/task/deleteTask";
 import { callAsignUserFromProject } from "../../../redux/reducers/users/asignUserFromProject";
 import { callDeleteUserFromProject } from "./../../../redux/reducers/users/deleteUserFromProject";
+import { callGetListTaskType } from "../../../redux/reducers/task/getAllTaskType";
+import { callGetListPriority } from "./../../../redux/reducers/task/getAllPriority";
+import { callGetListStatus } from "../../../redux/reducers/task/getAllStatus";
+import { getLocal, getStringLocal } from "../../../utils/config";
+import { DATA_USER } from "./../../../utils/constant";
+import { useFormik } from "formik";
+import { callInsertComments } from "../../../redux/reducers/comments/insertComment";
+import { callGetListComment } from "./../../../redux/reducers/comments/getComments";
+import { callDeleteComments } from "../../../redux/reducers/comments/deleteComments";
+import { callEditComments } from "../../../redux/reducers/comments/editComments";
 const { confirm } = Modal;
+const { Panel } = Collapse;
 export default function ProjectDetail() {
   const [modal1Open, setModal1Open] = useState(false);
   const params = useParams();
@@ -43,6 +57,30 @@ export default function ProjectDetail() {
     notification["error"]({
       message: "Notification !",
       description: "Delete task fail !",
+    });
+  };
+  const editCmtSuccess = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Edit comment successfully !",
+    });
+  };
+  const postCmtSuccess = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Post comment successfully !",
+    });
+  };
+  const deleteCmt = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Delete comment successfully !",
+    });
+  };
+  const errEditCmt = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "Edit comment fail !",
     });
   };
   const errUnthor = () => {
@@ -63,13 +101,22 @@ export default function ProjectDetail() {
       description: "User already exists !",
     });
   };
+  const dataUserComment = getLocal(DATA_USER);
   const listProjectDetail = useSelector(
     (state) => state.getProjectDetail.listProjectDetail
   );
-  console.log(listProjectDetail);
+  const listComments = useSelector((state) => state.getComments.listComments);
   const listUser = useSelector((state) => state.getUser.listUser);
   const listTaskDetail = useSelector(
     (state) => state.getTaskDetail.listTaskDetail
+  );
+  // console.log(listTaskDetail);
+  const listStatus = useSelector((state) => state.getAllStatus.listStatus);
+  const listPriority = useSelector(
+    (state) => state.getAllPriority.listPriority
+  );
+  const listTaskType = useSelector(
+    (state) => state.getAllTaskType.listTaskType
   );
   let dispatch = useDispatch();
   let timeout = null;
@@ -82,16 +129,69 @@ export default function ProjectDetail() {
   const keyWord = searchParams.has("keyWord")
     ? searchParams.get("keyWord")
     : "";
-  let [loading, setLoading] = useState(false);
+  const [taskId, setTaskId] = useState("");
+  const [contentComment, setContentComment] = useState("");
+  const [contentCommentEdit, setContentCommentEdit] = useState("");
+  const [idCommentEdit, setIdCommentEdit] = useState("");
   useEffect(() => {
-    setLoading(true);
     timeout = setTimeout(() => {
-      setLoading(false);
       dispatch(callGetListUser(keyWord));
       dispatch(callGetListProjectDetail(params.id));
-      // dispatch(callGetListTaskDetail());
+      dispatch(callGetListTaskType);
+      dispatch(callGetListPriority);
+      dispatch(callGetListStatus);
     }, 1000);
   }, [keyWord]);
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      listUserAsign: [listTaskDetail.assigness],
+      taskId: listTaskDetail.taskId,
+      taskName: listTaskDetail.taskName,
+      description: listTaskDetail.description,
+      statusId: listTaskDetail.statusId,
+      originalEstimate: listTaskDetail.originalEstimate,
+      timeTrackingSpent: listTaskDetail.timeTrackingSpent,
+      timeTrackingRemaining: listTaskDetail.timeTrackingRemaining,
+      projectId: listTaskDetail.projectId,
+      typeId: listTaskDetail.typeId,
+      priorityId: listTaskDetail.priorityId,
+    },
+    onSubmit: async (values) => {
+      console.log(values);
+      // if (passWord == passWordConfirm) {
+      //   const res = await dispatch(callUpdateUser(values));
+      //   if (res.isUpdate == true) {
+      //     openNotificationSuccess();
+      //   } else {
+      //     err();
+      //   }
+      // } else {
+      //   errPassWord();
+      // }
+    },
+  });
+  const handleChangeStatusId = (values) => {
+    formik.setFieldValue("statusId", values);
+  };
+  const handleChangeTaskId = (values) => {
+    formik.setFieldValue("taskId", values);
+  };
+  const onChangeStatusId = (values) => {
+    let a = "";
+    if (values == 1) {
+      a = "BACKLOG";
+    }
+    if (values == 2) {
+      a = "SELECTED FOR DEVELOPMENT";
+    }
+    if (values == 3) {
+      a = "IN PROGRESS";
+    } else {
+      a = "DONE";
+    }
+    return a;
+  };
   let title = `Add members to project ${listProjectDetail.projectName}`;
   const dataTask = () => {
     let listTask = listProjectDetail.lstTask;
@@ -179,16 +279,502 @@ export default function ProjectDetail() {
                           aria-labelledby="exampleModalLabel"
                           aria-hidden="true"
                         >
-                          <div className="modal-dialog" role="document">
+                          <div
+                            className="modal-dialog modal-xl"
+                            style={{ width: 1000 }}
+                            role="document"
+                          >
                             <div className="modal-content">
-                              <div
-                                className="modal-body"
-                                // style={{ width: 1000 }}
-                              >
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <Form initialValues={true}>
-                                    <Form.Item></Form.Item>
+                              <div className="container d-flex justify-content-end ">
+                                <button
+                                  data-dismiss="modal"
+                                  type="button"
+                                  className="ant-btn ant-btn-icon-only w-8 h-8 hover:bg-gray-100 hover:text-black focus:text-black border-0 p-0 shadow-none hover:shadow rounded"
+                                  onClick={() => {
+                                    setTaskId("");
+                                  }}
+                                >
+                                  <span
+                                    role="img"
+                                    aria-label="close"
+                                    className="anticon anticon-close"
+                                  >
+                                    <svg
+                                      viewBox="64 64 896 896"
+                                      focusable="false"
+                                      data-icon="close"
+                                      width="1em"
+                                      height="1em"
+                                      fill="currentColor"
+                                      aria-hidden="true"
+                                    >
+                                      <path d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z" />
+                                    </svg>
+                                  </span>
+                                </button>
+                              </div>
+                              <div className="modal-body">
+                                <div className="d-flex">
+                                  <Form
+                                    className="col-6"
+                                    onSubmitCapture={formik.handleSubmit}
+                                    layout="vertical"
+                                    initialValues={true}
+                                  >
+                                    <div className="contaier">
+                                      <div className="row row-gap-0">
+                                        <div
+                                          className=""
+                                          style={{
+                                            overflowY: "scroll",
+                                            maxHeight: "80vh",
+                                          }}
+                                        >
+                                          <Form.Item>
+                                            <Select
+                                              maxLength={200}
+                                              name="taskId"
+                                              defaultValue={
+                                                listTaskDetail?.taskTypeDetail
+                                                  ?.taskType
+                                              }
+                                              onChange={handleChangeTaskId}
+                                            >
+                                              {listTaskType.map((item) => {
+                                                return (
+                                                  <Select.Option
+                                                    value={item.id}
+                                                  >
+                                                    <button>
+                                                      {item.taskType}
+                                                    </button>
+                                                  </Select.Option>
+                                                );
+                                              })}
+                                            </Select>
+                                          </Form.Item>
+                                          <Form.Item>
+                                            <div
+                                              className="d-flex pl-2"
+                                              data-toggle="collapse"
+                                              data-target="#collapseExample"
+                                              aria-expanded="false"
+                                              aria-controls="collapseExample"
+                                            >
+                                              <Input
+                                                name="taskName"
+                                                value={formik.values.taskName}
+                                                onChange={formik.handleChange}
+                                              />
+
+                                              <div
+                                                id="collapseExample"
+                                                className="collapse"
+                                                aria-hidden="true"
+                                              >
+                                                <button className="btn bg-green-300 text-white hover:bg-green-500">
+                                                  <CheckOutlined />
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </Form.Item>
+                                          <Form.Item label="Description">
+                                            <div
+                                              className="d-flex pl-2"
+                                              data-toggle="collapse"
+                                              data-target="#collapseExample2"
+                                              aria-expanded="false"
+                                              aria-controls="collapseExample2"
+                                            >
+                                              <Input.TextArea
+                                                name="description"
+                                                value={
+                                                  formik.values.description
+                                                }
+                                                onChange={formik.handleChange}
+                                                placeholder="Add a description "
+                                              />
+                                              <div
+                                                id="collapseExample2"
+                                                className="collapse"
+                                              >
+                                                <button className="btn bg-green-300 text-white hover:bg-green-500">
+                                                  <CheckOutlined />
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </Form.Item>
+                                          <div className="d-flex flex-column">
+                                            <Form.Item className="col-12">
+                                              <Select
+                                                placeholder="Status"
+                                                name="statusId"
+                                                defaultValue={onChangeStatusId(
+                                                  formik.values.statusId
+                                                )}
+                                                onChange={handleChangeStatusId}
+                                              >
+                                                {listStatus.map((item) => {
+                                                  return (
+                                                    <Select.Option
+                                                      value={item.statusId}
+                                                    >
+                                                      {item.statusName}
+                                                    </Select.Option>
+                                                  );
+                                                })}
+                                              </Select>
+                                            </Form.Item>
+                                            <Collapse
+                                              onChange={(key) => {
+                                                console.log(key);
+                                              }}
+                                            >
+                                              <Panel header="Details" key="1">
+                                                <Form.Item name="listUserAsign">
+                                                  <div className="d-flex align-items-center">
+                                                    <div className="col-3">
+                                                      <label className=" pr-3">
+                                                        <span className="ant-typography">
+                                                          <strong>
+                                                            Assigners
+                                                          </strong>
+                                                        </span>
+                                                      </label>
+                                                    </div>
+                                                    <Select
+                                                      placeholder="Choose assigners"
+                                                      mode="multiple"
+                                                      style={{
+                                                        width: "80%",
+                                                        border: "none",
+                                                      }}
+                                                    >
+                                                      {listProjectDetail.members.map(
+                                                        (item) => {
+                                                          return (
+                                                            <Select.Option
+                                                              name="listUserAsign"
+                                                              value={
+                                                                formik.values
+                                                                  .listUserAsign
+                                                                  .id
+                                                              }
+                                                              onChange={
+                                                                formik.handleChange
+                                                              }
+                                                            >
+                                                              <div className="demo-option-label-item">
+                                                                <span role="img">
+                                                                  <button>
+                                                                    {item.name}
+                                                                  </button>
+                                                                </span>
+                                                              </div>
+                                                            </Select.Option>
+                                                          );
+                                                        }
+                                                      )}
+                                                    </Select>
+                                                  </div>
+                                                </Form.Item>
+                                                <Form.Item>
+                                                  <div className="d-flex align-items-center">
+                                                    <div className="col-3">
+                                                      <label className=" pr-3">
+                                                        <span className="ant-typography">
+                                                          <strong>Level</strong>
+                                                        </span>
+                                                      </label>
+                                                    </div>
+                                                    <Select
+                                                      placeholder="Priority"
+                                                      mode="multiple"
+                                                      style={{
+                                                        width: "80%",
+                                                        border: "none",
+                                                      }}
+                                                    >
+                                                      {listPriority.map(
+                                                        (item, index) => {
+                                                          return (
+                                                            <Select.Option
+                                                              name="priorityId"
+                                                              key={index}
+                                                              value={
+                                                                formik.values
+                                                                  .priorityId
+                                                              }
+                                                              onChange={
+                                                                formik.handleChange
+                                                              }
+                                                            >
+                                                              {item.priority}
+                                                            </Select.Option>
+                                                          );
+                                                        }
+                                                      )}
+                                                    </Select>
+                                                  </div>
+                                                </Form.Item>
+                                                <Form.Item name="originalEstimate">
+                                                  <div className="d-flex align-items-center">
+                                                    <div className="col-3">
+                                                      <label className=" pr-3">
+                                                        <span className="ant-typography">
+                                                          <strong>
+                                                            Estimate
+                                                          </strong>
+                                                        </span>
+                                                      </label>
+                                                    </div>
+                                                    <Input
+                                                      type="number"
+                                                      name="originalEstimate"
+                                                      value={
+                                                        formik.values
+                                                          .originalEstimate
+                                                      }
+                                                    />
+                                                  </div>
+                                                </Form.Item>
+                                              </Panel>
+                                            </Collapse>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
                                   </Form>
+                                  <div
+                                    className="col-6 overflow-y-scroll"
+                                    style={{
+                                      maxHeight: "80vh",
+                                      paddingLeft: "30px",
+                                    }}
+                                  >
+                                    <form
+                                      onSubmit={async (event) => {
+                                        try {
+                                          event.preventDefault();
+                                          let res = await dispatch(
+                                            callInsertComments({
+                                              taskId,
+                                              contentComment,
+                                            })
+                                          );
+                                          if (res.isInsert == true) {
+                                            postCmtSuccess();
+                                          }
+                                          await dispatch(
+                                            callGetListComment(taskId)
+                                          );
+                                          setContentComment("");
+                                          setTaskId(taskId);
+                                        } catch (error) {}
+                                      }}
+                                      label="Comments"
+                                      name="contentComment"
+                                    >
+                                      <div className="d-flex">
+                                        <div className="col-1 pr-3">
+                                          <Avatar
+                                            src={dataUserComment.avatar}
+                                          />
+                                        </div>
+                                        <input
+                                          required
+                                          className="border-2 rounded"
+                                          id="dataComments"
+                                          type="Text"
+                                          placeholder="Add a comment"
+                                          name="dataComments"
+                                          onChange={(event) =>
+                                            setContentComment(
+                                              event.target.value
+                                            )
+                                          }
+                                          onClick={() => {
+                                            setTaskId(taskId);
+                                          }}
+                                          value={contentComment}
+                                        />
+                                        <div className="pl-3">
+                                          <button
+                                            className="btn btn-success"
+                                            type="submit"
+                                          >
+                                            Post
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </form>
+                                    {listComments.map((item) => {
+                                      return (
+                                        <div className="d-flex pl-2 p-1 shadow-2-soft pt-3">
+                                          <div className="col-1">
+                                            <Avatar src={item.user.avatar} />
+                                          </div>
+                                          <div className="col-11 pl-4">
+                                            <div
+                                              className="ant-comment-content-author"
+                                              style={{ fontSize: 10 }}
+                                            >
+                                              <span className="ant-comment-content-author-name">
+                                                <span className="ant-typography">
+                                                  <strong>
+                                                    {item.user.name}
+                                                  </strong>
+                                                </span>
+                                              </span>
+                                            </div>
+                                            <div className="ant-comment-content-detail">
+                                              <div className="custom-html-parser">
+                                                <p>{item.contentComment}</p>
+                                              </div>
+                                            </div>
+                                            <ul className="ant-comment-actions d-flex">
+                                              <li>
+                                                <div>
+                                                  <button
+                                                    type="button"
+                                                    className="ant-btn ant-btn-link px-0 font-medium hover mr-2"
+                                                    data-toggle="modal"
+                                                    data-target="#modalEditCmt"
+                                                  >
+                                                    <span
+                                                      className="hover:underline text-gray-500 hover:text-gray-400"
+                                                      onClick={() => {
+                                                        setIdCommentEdit(
+                                                          item.id
+                                                        );
+                                                        dispatch(
+                                                          callGetListComment(
+                                                            item.taskId
+                                                          )
+                                                        );
+                                                      }}
+                                                    >
+                                                      Edit
+                                                    </span>
+                                                  </button>
+                                                  <div
+                                                    className="modal fade"
+                                                    id="modalEditCmt"
+                                                    tabIndex={-1}
+                                                    role="dialog"
+                                                    aria-labelledby="exampleModalLabel"
+                                                    aria-hidden="true"
+                                                  >
+                                                    <div
+                                                      className="modal-dialog"
+                                                      role="document"
+                                                    >
+                                                      <div className="modal-content">
+                                                        <div className="modal-body container">
+                                                          <input
+                                                            className="border rounded"
+                                                            type="text"
+                                                            name="contentCommentEdit"
+                                                            id="contentCommentEdit"
+                                                            defaultValue={
+                                                              item.contentComment
+                                                            }
+                                                            onChange={(event) =>
+                                                              setContentCommentEdit(
+                                                                event.target
+                                                                  .value
+                                                              )
+                                                            }
+                                                          />
+                                                        </div>
+                                                        <div className="d-flex justify-content-end">
+                                                          <button
+                                                            type="button"
+                                                            className="btn btn-secondary"
+                                                            data-dismiss="modal"
+                                                          >
+                                                            Close
+                                                          </button>
+                                                          <div className="pl-3">
+                                                            <button
+                                                              type="button"
+                                                              className="btn btn-primary"
+                                                              onClick={async () => {
+                                                                try {
+                                                                  let id =
+                                                                    idCommentEdit;
+                                                                  let res =
+                                                                    await dispatch(
+                                                                      callEditComments(
+                                                                        {
+                                                                          id,
+                                                                          contentCommentEdit,
+                                                                        }
+                                                                      )
+                                                                    );
+                                                                  if (
+                                                                    res.isEdit ==
+                                                                    true
+                                                                  ) {
+                                                                    await editCmtSuccess();
+                                                                  } else {
+                                                                    errEditCmt();
+                                                                  }
+                                                                  await dispatch(
+                                                                    callGetListComment(
+                                                                      item.taskId
+                                                                    )
+                                                                  );
+                                                                } catch (error) {}
+                                                              }}
+                                                            >
+                                                              Save
+                                                            </button>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </li>
+                                              <li>
+                                                <button
+                                                  type="button"
+                                                  className="ant-btn ant-btn-link px-0 font-medium hover"
+                                                >
+                                                  <span
+                                                    className="hover:underline text-gray-500 hover:text-gray-400"
+                                                    onClick={async () => {
+                                                      try {
+                                                        let res =
+                                                          await dispatch(
+                                                            callDeleteComments(
+                                                              item.id
+                                                            )
+                                                          );
+                                                        if (
+                                                          res.isDelete == true
+                                                        ) {
+                                                          deleteCmt();
+                                                        }
+                                                        await dispatch(
+                                                          callGetListComment(
+                                                            item.taskId
+                                                          )
+                                                        );
+                                                      } catch (error) {}
+                                                    }}
+                                                  >
+                                                    Delete
+                                                  </span>
+                                                </button>
+                                              </li>
+                                            </ul>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -199,6 +785,11 @@ export default function ProjectDetail() {
                           role={"button"}
                           data-toggle="modal"
                           data-target="#exampleModal"
+                          onClick={async () => {
+                            await setTaskId(item.taskId);
+                            await dispatch(callGetListComment(item.taskId));
+                            dispatch(callGetListTaskDetail(item.taskId));
+                          }}
                         >
                           <div className="row row-gap-0">
                             <div className="col-8">
@@ -211,7 +802,16 @@ export default function ProjectDetail() {
                             </div>
                             <div className="col-4">
                               <div className="h-full w-full d-flex justify-end items end">
-                                <Avatar size="small" icon={<UserOutlined />} />
+                                {listProjectDetail.members.map((item) => {
+                                  return (
+                                    <Tooltip
+                                      title={item.name}
+                                      style={{ color: "black" }}
+                                    >
+                                      <Avatar size="small" src={item.avatar} />
+                                    </Tooltip>
+                                  );
+                                })}
                               </div>
                             </div>
                           </div>
@@ -253,7 +853,11 @@ export default function ProjectDetail() {
           <h5>Members</h5>
           <span className="d-flex pl-3">
             {listProjectDetail?.members?.map((item, index) => {
-              return <Avatar src={item.avatar} />;
+              return (
+                <Tooltip title={item.name}>
+                  <Avatar src={item.avatar} />
+                </Tooltip>
+              );
             })}
             <button onClick={() => setModal1Open(true)}>
               <Avatar>+</Avatar>
