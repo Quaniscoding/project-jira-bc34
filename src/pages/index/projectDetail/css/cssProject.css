@@ -24,7 +24,8 @@
   display: inline-block;
   line-height: 1;
 }
-:where(.css-dev-only-do-not-override-1vui4uo).ant-tooltip .ant-tooltip-inner {
+:where(.css-dev-only-do-not-override-1vui4uo).ant-tooltip .ant-tooltip-inner,
+:where(.css-dev-only-do-not-override-8uvayj).ant-tooltip .ant-tooltip-inner {
   min-width: 32px;
   min-height: 32px;
   padding: 6px 8px;

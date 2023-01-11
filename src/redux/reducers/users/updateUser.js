@@ -17,7 +17,7 @@ export const { } = updateUser.actions
 export default updateUser.reducer
 export const callUpdateUser = (data) => async () => {
     try {
-        const apiLogin = await http.put("/Users/editUser", data)
+        const apiUpdateUser = await http.put("/Users/editUser", data)
         history.push("/user")
         return { isUpdate: true }
     } catch (err) {

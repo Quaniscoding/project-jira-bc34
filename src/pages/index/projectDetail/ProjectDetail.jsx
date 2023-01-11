@@ -42,6 +42,7 @@ import { callInsertComments } from "../../../redux/reducers/comments/insertComme
 import { callGetListComment } from "./../../../redux/reducers/comments/getComments";
 import { callDeleteComments } from "../../../redux/reducers/comments/deleteComments";
 import { callEditComments } from "../../../redux/reducers/comments/editComments";
+import { callEditTask } from "../../../redux/reducers/task/editTask";
 const { confirm } = Modal;
 const { Panel } = Collapse;
 export default function ProjectDetail() {
@@ -71,6 +72,12 @@ export default function ProjectDetail() {
       description: "Post comment successfully !",
     });
   };
+  const editTask = () => {
+    notification["success"]({
+      message: "Notification !",
+      description: "Edit task successfully !",
+    });
+  };
   const deleteCmt = () => {
     notification["success"]({
       message: "Notification !",
@@ -81,6 +88,12 @@ export default function ProjectDetail() {
     notification["error"]({
       message: "Notification !",
       description: "Edit comment fail !",
+    });
+  };
+  const errEditTask = () => {
+    notification["error"]({
+      message: "Notification !",
+      description: "Edit task fail !",
     });
   };
   const errUnthor = () => {
@@ -110,7 +123,6 @@ export default function ProjectDetail() {
   const listTaskDetail = useSelector(
     (state) => state.getTaskDetail.listTaskDetail
   );
-  // console.log(listTaskDetail);
   const listStatus = useSelector((state) => state.getAllStatus.listStatus);
   const listPriority = useSelector(
     (state) => state.getAllPriority.listPriority
@@ -145,7 +157,7 @@ export default function ProjectDetail() {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      listUserAsign: [listTaskDetail.assigness],
+      listUserAsign: listTaskDetail.assigness?.id,
       taskId: listTaskDetail.taskId,
       taskName: listTaskDetail.taskName,
       description: listTaskDetail.description,
@@ -158,39 +170,28 @@ export default function ProjectDetail() {
       priorityId: listTaskDetail.priorityId,
     },
     onSubmit: async (values) => {
-      console.log(values);
-      // if (passWord == passWordConfirm) {
-      //   const res = await dispatch(callUpdateUser(values));
-      //   if (res.isUpdate == true) {
-      //     openNotificationSuccess();
-      //   } else {
-      //     err();
-      //   }
-      // } else {
-      //   errPassWord();
-      // }
+      try {
+        const res = await dispatch(callEditTask(values));
+        if (res.isUpdate == true) {
+          editTask();
+        } else {
+          errEditTask();
+        }
+        await dispatch(callGetListProjectDetail(params.id));
+      } catch (error) {}
     },
   });
   const handleChangeStatusId = (values) => {
     formik.setFieldValue("statusId", values);
   };
   const handleChangeTaskId = (values) => {
-    formik.setFieldValue("taskId", values);
+    formik.setFieldValue("typeId", values);
   };
-  const onChangeStatusId = (values) => {
-    let a = "";
-    if (values == 1) {
-      a = "BACKLOG";
-    }
-    if (values == 2) {
-      a = "SELECTED FOR DEVELOPMENT";
-    }
-    if (values == 3) {
-      a = "IN PROGRESS";
-    } else {
-      a = "DONE";
-    }
-    return a;
+  const handleChangeListUserAsign = (values) => {
+    formik.setFieldValue("listUserAsign", values);
+  };
+  const handleChangePriorityId = (values) => {
+    formik.setFieldValue("priorityId", values);
   };
   let title = `Add members to project ${listProjectDetail.projectName}`;
   const dataTask = () => {
@@ -314,6 +315,14 @@ export default function ProjectDetail() {
                                 </button>
                               </div>
                               <div className="modal-body">
+                                <div className="row">
+                                  <div className="col-6">
+                                    <h3>Edit task</h3>
+                                  </div>
+                                  <div className="col-6">
+                                    <h3>Comments</h3>
+                                  </div>
+                                </div>
                                 <div className="d-flex">
                                   <Form
                                     className="col-6"
@@ -330,13 +339,12 @@ export default function ProjectDetail() {
                                             maxHeight: "80vh",
                                           }}
                                         >
-                                          <Form.Item>
+                                          <Form.Item label={"Task type"}>
                                             <Select
                                               maxLength={200}
                                               name="taskId"
                                               defaultValue={
-                                                listTaskDetail?.taskTypeDetail
-                                                  ?.taskType
+                                                item.taskTypeDetail.taskType
                                               }
                                               onChange={handleChangeTaskId}
                                             >
@@ -353,64 +361,33 @@ export default function ProjectDetail() {
                                               })}
                                             </Select>
                                           </Form.Item>
-                                          <Form.Item>
-                                            <div
-                                              className="d-flex pl-2"
-                                              data-toggle="collapse"
-                                              data-target="#collapseExample"
-                                              aria-expanded="false"
-                                              aria-controls="collapseExample"
-                                            >
-                                              <Input
-                                                name="taskName"
-                                                value={formik.values.taskName}
-                                                onChange={formik.handleChange}
-                                              />
-
-                                              <div
-                                                id="collapseExample"
-                                                className="collapse"
-                                                aria-hidden="true"
-                                              >
-                                                <button className="btn bg-green-300 text-white hover:bg-green-500">
-                                                  <CheckOutlined />
-                                                </button>
-                                              </div>
-                                            </div>
+                                          <Form.Item label="Task name">
+                                            <Input
+                                              name="taskName"
+                                              value={formik.values.taskName}
+                                              onChange={formik.handleChange}
+                                            />
                                           </Form.Item>
                                           <Form.Item label="Description">
-                                            <div
-                                              className="d-flex pl-2"
-                                              data-toggle="collapse"
-                                              data-target="#collapseExample2"
-                                              aria-expanded="false"
-                                              aria-controls="collapseExample2"
-                                            >
-                                              <Input.TextArea
-                                                name="description"
-                                                value={
-                                                  formik.values.description
-                                                }
-                                                onChange={formik.handleChange}
-                                                placeholder="Add a description "
-                                              />
-                                              <div
-                                                id="collapseExample2"
-                                                className="collapse"
-                                              >
-                                                <button className="btn bg-green-300 text-white hover:bg-green-500">
-                                                  <CheckOutlined />
-                                                </button>
-                                              </div>
-                                            </div>
+                                            <Input.TextArea
+                                              name="description"
+                                              value={formik.values.description}
+                                              onChange={formik.handleChange}
+                                              placeholder="Add a description "
+                                            />
                                           </Form.Item>
                                           <div className="d-flex flex-column">
-                                            <Form.Item className="col-12">
+                                            <Form.Item
+                                              className="col-12"
+                                              label="Status"
+                                            >
                                               <Select
                                                 placeholder="Status"
                                                 name="statusId"
-                                                defaultValue={onChangeStatusId(
-                                                  formik.values.statusId
+                                                defaultValue={listProjectDetail.lstTask.map(
+                                                  (item) => {
+                                                    return item.statusName;
+                                                  }
                                                 )}
                                                 onChange={handleChangeStatusId}
                                               >
@@ -425,11 +402,7 @@ export default function ProjectDetail() {
                                                 })}
                                               </Select>
                                             </Form.Item>
-                                            <Collapse
-                                              onChange={(key) => {
-                                                console.log(key);
-                                              }}
-                                            >
+                                            <Collapse onChange={(key) => {}}>
                                               <Panel header="Details" key="1">
                                                 <Form.Item name="listUserAsign">
                                                   <div className="d-flex align-items-center">
@@ -449,19 +422,22 @@ export default function ProjectDetail() {
                                                         width: "80%",
                                                         border: "none",
                                                       }}
+                                                      name="listUserAsign"
+                                                      defaultValue={listProjectDetail.members.map(
+                                                        (item) => {
+                                                          return item.name;
+                                                        }
+                                                      )}
+                                                      onChange={
+                                                        handleChangeListUserAsign
+                                                      }
                                                     >
-                                                      {listProjectDetail.members.map(
+                                                      {listProjectDetail?.members?.map(
                                                         (item) => {
                                                           return (
                                                             <Select.Option
-                                                              name="listUserAsign"
                                                               value={
-                                                                formik.values
-                                                                  .listUserAsign
-                                                                  .id
-                                                              }
-                                                              onChange={
-                                                                formik.handleChange
+                                                                item.userId
                                                               }
                                                             >
                                                               <div className="demo-option-label-item">
@@ -488,25 +464,26 @@ export default function ProjectDetail() {
                                                       </label>
                                                     </div>
                                                     <Select
+                                                      name="priorityId"
                                                       placeholder="Priority"
-                                                      mode="multiple"
                                                       style={{
                                                         width: "80%",
                                                         border: "none",
                                                       }}
+                                                      defaultValue={
+                                                        item.priorityTask
+                                                          .priority
+                                                      }
+                                                      onChange={
+                                                        handleChangePriorityId
+                                                      }
                                                     >
                                                       {listPriority.map(
-                                                        (item, index) => {
+                                                        (item) => {
                                                           return (
                                                             <Select.Option
-                                                              name="priorityId"
-                                                              key={index}
                                                               value={
-                                                                formik.values
-                                                                  .priorityId
-                                                              }
-                                                              onChange={
-                                                                formik.handleChange
+                                                                item.priorityId
                                                               }
                                                             >
                                                               {item.priority}
@@ -535,6 +512,9 @@ export default function ProjectDetail() {
                                                         formik.values
                                                           .originalEstimate
                                                       }
+                                                      onChange={
+                                                        formik.handleChange
+                                                      }
                                                     />
                                                   </div>
                                                 </Form.Item>
@@ -544,7 +524,13 @@ export default function ProjectDetail() {
                                         </div>
                                       </div>
                                     </div>
+                                    <Form.Item className="d-flex justify-content-end pt-3">
+                                      <Button type="primary" htmlType="submit">
+                                        Submit
+                                      </Button>
+                                    </Form.Item>
                                   </Form>
+
                                   <div
                                     className="col-6 overflow-y-scroll"
                                     style={{
