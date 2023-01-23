@@ -19,7 +19,6 @@ export const callDeleteComments = (commentsId) => async () => {
         const apiDeleteComments = await http.delete(`/Comment/deleteComment?idComment=${commentsId}`)
         return { isDelete: true }
     } catch (error) {
-        console.log(error);
         return { isDelete: false }
     }
 }

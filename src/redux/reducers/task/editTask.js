@@ -19,7 +19,6 @@ export const callEditTask = (data) => async () => {
         const apiEditTask = await http.post(`/Project/updateTask`, data)
         return { isUpdate: true }
     } catch (error) {
-        console.log(error);
         return { isUpdate: false }
     }
 }

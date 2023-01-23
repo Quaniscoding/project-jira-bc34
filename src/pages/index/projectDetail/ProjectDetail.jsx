@@ -197,7 +197,7 @@ export default function ProjectDetail() {
   const dataTask = () => {
     let listTask = listProjectDetail.lstTask;
     return listTask?.map((item, index) => {
-      var bg = "";
+      let bg = "";
       let bgColor = item.statusId;
       if (bgColor == 1) {
         bg = "bg-gray-400";
@@ -385,7 +385,7 @@ export default function ProjectDetail() {
                                                 placeholder="Status"
                                                 name="statusId"
                                                 defaultValue={listProjectDetail.lstTask.map(
-                                                  (item) => {
+                                                  (item, index) => {
                                                     return item.statusName;
                                                   }
                                                 )}
@@ -422,7 +422,7 @@ export default function ProjectDetail() {
                                                         width: "80%",
                                                         border: "none",
                                                       }}
-                                                      name="listUserAsign"
+                                                      // name="listUserAsign"
                                                       defaultValue={listProjectDetail.members.map(
                                                         (item) => {
                                                           return item.name;
@@ -775,6 +775,7 @@ export default function ProjectDetail() {
                             await setTaskId(item.taskId);
                             await dispatch(callGetListComment(item.taskId));
                             dispatch(callGetListTaskDetail(item.taskId));
+                            dispatch(callGetListProjectDetail(params.id));
                           }}
                         >
                           <div className="row row-gap-0">

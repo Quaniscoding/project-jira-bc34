@@ -19,7 +19,6 @@ export const callInsertComments = (data) => async () => {
         const apiInsertComments = await http.post('/Comment/insertComment', data);
         return { isInsert: true }
     } catch (error) {
-        console.log(error);
         return { isInsert: false }
     }
 }
